@@ -1,0 +1,747 @@
+================================================================================
+GUÍA COMPLETA DE MIGRACIÓN - PROYECTO SOLHANA
+Panel de Administración y Tienda E-commerce
+================================================================================
+
+INFORMACIÓN GENERAL DEL PROYECTO
+================================================================================
+Nombre: Solhana Proyecto Cliente
+Versión: 0.1.0
+Tipo: E-commerce con Panel de Administración
+Base de Datos: Supabase (PostgreSQL)
+Framework Frontend: Next.js 15.2.4 con App Router
+Lenguaje: TypeScript 5
+Estado: Producción Listo
+
+VERSIONES EXACTAS DE DEPENDENCIAS
+================================================================================
+
+DEPENDENCIAS DE PRODUCCIÓN:
+- next: 15.2.4
+- react: 19.2.0
+- react-dom: 19.2.0
+- @supabase/supabase-js: 2.86.0
+- @supabase/ssr: 0.8.0
+- sweetalert2: 11.26.3
+- @anthropic-ai/sdk: 0.71.0
+- clsx: 2.1.1
+- lucide-react: 0.555.0
+- tailwind-merge: 3.4.0
+
+DEPENDENCIAS DE DESARROLLO:
+- typescript: 5
+- @types/node: 20
+- @types/react: 19
+- @types/react-dom: 19
+- eslint: 9
+- eslint-config-next: 15.2.4
+- tailwindcss: 4
+- @tailwindcss/postcss: 4
+- postcss: (incluido con Tailwind)
+- autoprefixer: (incluido con Tailwind)
+
+REQUISITOS DEL SISTEMA
+================================================================================
+- Node.js: v18 o superior (recomendado v20)
+- Navegador: Compatible con ES2017+
+- Base de Datos: Supabase (PostgreSQL)
+- Almacenamiento: Supabase Storage
+- Sistema Operativo: Windows, macOS o Linux
+
+CONFIGURACIÓN TYPESCRIPT (tsconfig.json)
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+CONFIGURACIÓN NEXT.JS (next.config.ts)
+================================================================================
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.in',
+      },
+    ],
+  },
+  reactStrictMode: false,
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+    turbo: {
+      resolveAlias: {},
+    },
+  },
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+};
+
+export default nextConfig;
+
+VARIABLES DE ENTORNO REQUERIDAS (.env.local)
+================================================================================
+Crear archivo .env.local en la raíz del proyecto con:
+
+NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anonima_aqui
+
+NOTA: Estas variables son públicas y se usan en el cliente. Para producción,
+asegúrate de configurar Row Level Security (RLS) en Supabase.
+
+ESTRUCTURA COMPLETA DEL PROYECTO
+================================================================================
+
+solhanaproyectocliente/
+├── app/                          # Páginas Next.js (App Router)
+│   ├── admin/                    # Panel de Administración
+│   │   ├── layout.tsx           # Layout del admin con Sidebar
+│   │   ├── page.tsx              # Dashboard principal
+│   │   ├── pedidos/              # Gestión de pedidos
+│   │   │   ├── page.tsx          # Lista de pedidos
+│   │   │   └── [id]/             # Detalle de pedido
+│   │   │       └── page.tsx
+│   │   ├── productos/           # Gestión de productos
+│   │   │   ├── page.tsx          # Lista de productos
+│   │   │   ├── nuevo/           # Crear producto
+│   │   │   │   └── page.tsx
+│   │   │   └── editar/          # Editar producto
+│   │   │       └── [id]/
+│   │   │           └── page.tsx
+│   │   ├── clientes/            # Gestión de clientes
+│   │   │   └── page.tsx
+│   │   ├── analiticas/          # Reportes y analíticas
+│   │   │   └── page.tsx
+│   │   ├── diseno/              # Diseño de página (preparado)
+│   │   │   └── page.tsx
+│   │   ├── configuracion/       # Configuración (preparado)
+│   │   │   └── page.tsx
+│   │   └── ayuda/               # Ayuda y documentación
+│   │       └── page.tsx
+│   ├── auth/                    # Autenticación
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   └── callback/
+│   │       └── route.ts
+│   ├── carrito/                 # Carrito de compras
+│   │   └── page.tsx
+│   ├── checkout/                # Proceso de checkout
+│   │   └── page.tsx
+│   ├── producto/                # Detalle de producto
+│   │   └── [id]/
+│   │       └── page.tsx
+│   ├── tienda/                  # Tienda principal
+│   │   ├── page.tsx
+│   │   ├── hombres/
+│   │   │   └── page.tsx
+│   │   ├── mujeres/
+│   │   │   └── page.tsx
+│   │   ├── accesorios/
+│   │   │   └── page.tsx
+│   │   └── novedades/
+│   │       └── page.tsx
+│   ├── mi-cuenta/               # Cuenta del usuario
+│   │   └── page.tsx
+│   ├── mis-pedidos/             # Pedidos del usuario
+│   │   └── page.tsx
+│   ├── categorias/              # Lista de categorías
+│   │   └── page.tsx
+│   ├── contacto/                # Página de contacto
+│   │   └── page.tsx
+│   ├── sobre-nosotros/          # Sobre nosotros
+│   │   └── page.tsx
+│   ├── politica-privacidad/     # Política de privacidad
+│   │   └── page.tsx
+│   ├── politica-envios/         # Política de envíos
+│   │   └── page.tsx
+│   ├── terminos-servicio/       # Términos de servicio
+│   │   └── page.tsx
+│   ├── devoluciones/            # Política de devoluciones
+│   │   └── page.tsx
+│   ├── preguntas-frecuentes/    # FAQ
+│   │   └── page.tsx
+│   ├── pedido-exitoso/          # Confirmación de pedido
+│   │   └── page.tsx
+│   ├── layout.tsx               # Layout principal
+│   ├── page.tsx                 # Página de inicio
+│   ├── globals.css              # Estilos globales
+│   └── favicon.ico
+├── components/                  # Componentes React
+│   ├── admin/                   # Componentes del admin
+│   │   ├── Sidebar.tsx          # Barra lateral de navegación
+│   │   ├── AdminHeader.tsx      # Encabezado del admin
+│   │   ├── KPICard.tsx          # Tarjeta de métrica
+│   │   ├── OrdersTable.tsx      # Tabla de pedidos
+│   │   ├── TopProducts.tsx      # Productos más vendidos
+│   │   ├── LowStockProducts.tsx # Productos con bajo stock
+│   │   ├── SalesChart.tsx       # Gráfico de ventas
+│   │   ├── ImageUploader.tsx    # Subida de imágenes
+│   │   ├── Modal.tsx            # Modal reutilizable
+│   │   ├── AddAttributeModal.tsx # Modal para atributos
+│   │   └── AddValueModal.tsx    # Modal para valores
+│   ├── Header.tsx               # Encabezado principal
+│   ├── Footer.tsx               # Pie de página
+│   ├── ProductCard.tsx          # Tarjeta de producto
+│   ├── ProductCardSkeleton.tsx  # Skeleton de producto
+│   ├── LoadingSpinner.tsx       # Spinner de carga
+│   ├── PageLoader.tsx           # Loader de página
+│   └── Icons.tsx                # Sistema de iconos
+├── contexts/                    # Contextos React
+│   └── AuthContext.tsx          # Contexto de autenticación
+├── lib/                         # Utilidades y helpers
+│   ├── supabase.ts              # Cliente de Supabase
+│   ├── supabase-client.ts       # Cliente SSR de Supabase
+│   ├── supabase-queries.ts      # Funciones de queries
+│   ├── supabase-storage.ts      # Gestión de Storage
+│   ├── swal.ts                  # Helpers de SweetAlert2
+│   ├── auth-helpers.ts          # Helpers de autenticación
+│   └── utils.ts                 # Utilidades generales
+├── types/                       # Tipos TypeScript
+│   └── database.ts              # Tipos de base de datos
+├── public/                      # Archivos estáticos
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── package.json                 # Dependencias
+├── package-lock.json            # Lock de dependencias
+├── tsconfig.json                # Configuración TypeScript
+├── next.config.ts               # Configuración Next.js
+├── postcss.config.mjs           # Configuración PostCSS
+├── eslint.config.mjs            # Configuración ESLint
+├── supabase_schema.sql          # Esquema de base de datos
+├── supabase_triggers.sql        # Triggers de base de datos
+├── clean-cache.ps1             # Script de limpieza (Windows)
+├── README.md                    # Documentación
+└── .gitignore                   # Archivos ignorados
+
+PASOS DE INSTALACIÓN COMPLETOS
+================================================================================
+
+1. PREPARACIÓN DEL ENTORNO
+   ------------------------
+   - Instalar Node.js v18 o superior
+   - Crear cuenta en Supabase (https://supabase.com)
+   - Crear nuevo proyecto en Supabase
+
+2. CLONAR/CREAR PROYECTO
+   ----------------------
+   - Crear carpeta del proyecto
+   - Inicializar git (opcional): git init
+   - Crear archivo .gitignore con:
+     node_modules/
+     .next/
+     .env.local
+     .env*.local
+     *.log
+     .DS_Store
+
+3. INSTALAR DEPENDENCIAS
+   ---------------------
+   Ejecutar en la terminal:
+   
+   npm install next@15.2.4 react@19.2.0 react-dom@19.2.0
+   npm install @supabase/supabase-js@2.86.0 @supabase/ssr@0.8.0
+   npm install sweetalert2@11.26.3 @anthropic-ai/sdk@0.71.0
+   npm install clsx@2.1.1 lucide-react@0.555.0 tailwind-merge@3.4.0
+   
+   npm install -D typescript@5 @types/node@20 @types/react@19 @types/react-dom@19
+   npm install -D eslint@9 eslint-config-next@15.2.4
+   npm install -D tailwindcss@4 @tailwindcss/postcss@4
+
+4. CONFIGURAR ARCHIVOS BASE
+   ------------------------
+   
+   a) Crear tsconfig.json (ver sección CONFIGURACIÓN TYPESCRIPT)
+   
+   b) Crear next.config.ts (ver sección CONFIGURACIÓN NEXT.JS)
+   
+   c) Crear postcss.config.mjs:
+      export default {
+        plugins: {
+          '@tailwindcss/postcss': {},
+        },
+      };
+   
+   d) Crear eslint.config.mjs:
+      import { dirname } from "path";
+      import { fileURLToPath } from "url";
+      import { FlatCompat } from "@eslint/eslintrc";
+      
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      
+      const compat = new FlatCompat({
+        baseDirectory: __dirname,
+      });
+      
+      const eslintConfig = [
+        ...compat.extends("next/core-web-vitals", "next/typescript"),
+      ];
+      
+      export default eslintConfig;
+
+5. CONFIGURAR SUPABASE
+   --------------------
+   
+   a) En Supabase Dashboard:
+      - Ir a Settings > API
+      - Copiar "Project URL" y "anon public" key
+   
+   b) Crear archivo .env.local:
+      NEXT_PUBLIC_SUPABASE_URL=tu_url_aqui
+      NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_key_aqui
+   
+   c) Ejecutar esquema de base de datos:
+      - Ir a SQL Editor en Supabase
+      - Ejecutar contenido de supabase_schema.sql
+      - Ejecutar contenido de supabase_triggers.sql
+   
+   d) Configurar Storage:
+      - Ir a Storage en Supabase
+      - Crear bucket "productos" (público)
+      - Crear bucket "banners" (público)
+      - Configurar políticas RLS si es necesario
+
+6. CREAR ESTRUCTURA DE CARPETAS
+   -----------------------------
+   Crear todas las carpetas según la estructura del proyecto (ver sección
+   ESTRUCTURA COMPLETA DEL PROYECTO)
+
+7. CONFIGURAR ESTILOS
+   ------------------
+   Crear app/globals.css:
+   @import "tailwindcss";
+   
+   :root {
+     --background: #ffffff;
+     --foreground: #171717;
+   }
+   
+   @theme inline {
+     --color-background: var(--background);
+     --color-foreground: var(--foreground);
+     --font-sans: var(--font-geist-sans);
+     --font-mono: var(--font-geist-mono);
+   }
+   
+   body {
+     background: #ffffff;
+     color: #171717;
+     font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+   }
+   
+   .line-clamp-2 {
+     display: -webkit-box;
+     -webkit-line-clamp: 2;
+     -webkit-box-orient: vertical;
+     overflow: hidden;
+   }
+   
+   @keyframes slideInFromRight {
+     from {
+       opacity: 0;
+       transform: translateX(-20px);
+     }
+     to {
+       opacity: 1;
+       transform: translateX(0);
+     }
+   }
+   
+   @keyframes fadeIn {
+     from {
+       opacity: 0;
+     }
+     to {
+       opacity: 1;
+     }
+   }
+   
+   .animate-slide-in {
+     animation: slideInFromRight 0.3s ease-out;
+   }
+   
+   .animate-fade-in {
+     animation: fadeIn 0.2s ease-out;
+   }
+
+ARCHIVOS CRÍTICOS A CREAR
+================================================================================
+
+1. lib/supabase.ts
+   ---------------
+   import { createClient } from '@supabase/supabase-js';
+   
+   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+   
+   export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+2. lib/supabase-queries.ts
+   ------------------------
+   Este archivo contiene TODAS las funciones de queries a la base de datos.
+   Incluye:
+   - getProductos, getProductoById, crearProducto, actualizarProducto, eliminarProducto
+   - getPedidos, getPedidoById, crearPedido, actualizarPedido
+   - getClientes, getClienteById, crearCliente, actualizarCliente
+   - getDashboardKPIs, getUltimosPedidos, getProductosMasVendidos
+   - getVentasPorDia, getVentasPorCategoria
+   - Y muchas más funciones críticas
+   
+   IMPORTANTE: Este archivo tiene más de 1000 líneas y es esencial.
+   Debe copiarse completo desde el proyecto original.
+
+3. lib/supabase-storage.ts
+   ------------------------
+   Funciones para subir/eliminar imágenes en Supabase Storage.
+   Incluye validación de archivos, uploadImage, deleteImage, etc.
+
+4. lib/swal.ts
+   -----------
+   Helpers para SweetAlert2:
+   - showSuccess, showError, showConfirm, showInfo, showLoading, closeLoading
+
+5. types/database.ts
+   -----------------
+   TODOS los tipos TypeScript de la base de datos:
+   - Producto, ProductoCatalogo, ProductoImagen, ProductoVariante
+   - Pedido, PedidoItem, PedidoHistorial
+   - Cliente, ClienteDireccion
+   - Categoria, MetodoPago, MetodoEnvio
+   - DashboardKPI, VentasPorDia, VentasPorCategoria
+   - ProductoMasVendido, ProductoBajoStock
+   - Y más...
+
+6. components/Icons.tsx
+   --------------------
+   Sistema completo de iconos SVG personalizados:
+   - DashboardIcon, OrdersIcon, ProductsIcon, ClientsIcon
+   - AnalyticsIcon, SettingsIcon, HelpIcon, LogoIcon
+   - PlusIcon, EditIcon, TrashIcon, SearchIcon, EyeIcon
+   - Y más iconos...
+
+CARACTERÍSTICAS IMPLEMENTADAS
+================================================================================
+
+PANEL DE ADMINISTRACIÓN:
+✅ Dashboard con KPIs (Ventas, Pedidos, Visitantes, Conversión)
+✅ Gráfico de ventas por día
+✅ Tabla de últimos pedidos
+✅ Productos más vendidos
+✅ Productos con bajo stock
+✅ Gestión completa de pedidos (listar, ver detalle, cambiar estado)
+✅ Gestión completa de productos (crear, editar, eliminar, listar)
+✅ Gestión de clientes (listar, ver detalles)
+✅ Analíticas y reportes (ventas por día, por categoría)
+✅ Sistema de búsqueda y filtros en todas las secciones
+✅ Paginación en listados
+✅ Subida de imágenes para productos
+✅ Sistema de variantes de productos
+✅ Historial de cambios en pedidos
+
+TIENDA DE CLIENTES:
+✅ Página de inicio con banner y productos destacados
+✅ Tienda con filtros avanzados (categoría, tipo, precio, talla)
+✅ Detalle de producto con galería de imágenes
+✅ Carrito de compras persistente
+✅ Proceso de checkout completo
+✅ Autenticación de usuarios (email y Google OAuth)
+✅ Mi cuenta y mis pedidos
+✅ Páginas informativas (sobre nosotros, contacto, políticas)
+
+FUNCIONALIDADES TÉCNICAS:
+✅ Manejo robusto de errores en todas las queries
+✅ Estados de carga en todos los componentes
+✅ Validación de datos antes de usar
+✅ Prevención de recargas innecesarias al cambiar de pestaña
+✅ Optimización de rendimiento con useCallback y useRef
+✅ Sistema de alertas con SweetAlert2
+✅ Diseño responsive completo
+✅ Integración completa con Supabase
+
+CONFIGURACIÓN DE BASE DE DATOS
+================================================================================
+
+TABLAS PRINCIPALES (definidas en supabase_schema.sql):
+- categorias
+- productos
+- producto_imagenes
+- producto_variantes
+- producto_especificaciones
+- clientes
+- cliente_direcciones
+- pedidos
+- pedido_items
+- pedido_historial
+- carrito
+- metodos_pago
+- metodos_envio
+- ciudades_envio
+
+VISTAS:
+- productos_catalogo (vista optimizada para catálogo público)
+- carrito_completo (vista del carrito con información completa)
+
+TRIGGERS (definidos en supabase_triggers.sql):
+- Creación automática de cliente al registrar usuario
+- Generación automática de número de pedido
+- Actualización de totales de cliente
+
+FUNCIONES:
+- Funciones de cálculo de precios
+- Funciones de validación
+- Funciones de actualización de stock
+
+SCRIPTS NPM DISPONIBLES
+================================================================================
+
+npm run dev          - Inicia servidor de desarrollo con Turbopack
+npm run dev:clean    - Limpia cache y inicia desarrollo
+npm run build        - Construye aplicación para producción
+npm run start        - Inicia servidor de producción
+npm run lint         - Ejecuta ESLint
+npm run clean        - Elimina carpeta .next
+
+NOTAS IMPORTANTES PARA EL PROGRAMADOR
+================================================================================
+
+1. VERSIONES EXACTAS:
+   - Es CRÍTICO usar las versiones exactas especificadas
+   - React 19 tiene cambios importantes respecto a React 18
+   - Next.js 15.2.4 es compatible con React 19
+   - No actualizar sin probar exhaustivamente
+
+2. CONFIGURACIÓN DE SUPABASE:
+   - El proyecto usa Row Level Security (RLS) - configurar políticas
+   - Los buckets de Storage deben crearse manualmente
+   - Las variables de entorno son públicas (NEXT_PUBLIC_*)
+   - Para producción, usar variables de entorno seguras
+
+3. MANEJO DE ESTADOS:
+   - El proyecto usa useState y useEffect principalmente
+   - Se usa useRef para prevenir recargas innecesarias
+   - Se usa useCallback para optimizar funciones
+   - NO se usa Redux ni Context API global (excepto AuthContext)
+
+4. ESTILOS:
+   - Se usa Tailwind CSS 4
+   - NO se usan CSS Modules
+   - Los estilos están en clases de Tailwind
+   - Hay algunas animaciones CSS personalizadas en globals.css
+
+5. RUTAS:
+   - Todas las rutas del admin están bajo /admin/*
+   - Las rutas del cliente están en la raíz
+   - Se usa App Router de Next.js (no Pages Router)
+   - Las rutas dinámicas usan [id] o [slug]
+
+6. AUTENTICACIÓN:
+   - Se usa Supabase Auth
+   - Hay trigger que crea cliente automáticamente
+   - Se soporta email/password y Google OAuth
+   - El AuthContext maneja el estado de autenticación
+
+7. CARGA DE DATOS:
+   - Todas las funciones de queries retornan { data, error }
+   - Siempre verificar error antes de usar data
+   - Usar estados de carga (loading) en todos los componentes
+   - Manejar casos de datos vacíos o nulos
+
+8. IMÁGENES:
+   - Las imágenes se suben a Supabase Storage
+   - Bucket "productos" para imágenes de productos
+   - Bucket "banners" para banners (preparado)
+   - Validación: máximo 5MB, tipos: JPEG, JPG, PNG, WEBP, GIF
+
+9. OPTIMIZACIONES:
+   - Se previene recarga al cambiar de pestaña usando useRef
+   - Se memoizan funciones con useCallback
+   - Se evitan renders innecesarios
+   - Las queries solo se ejecutan cuando cambian los filtros
+
+10. ERRORES COMUNES A EVITAR:
+    - No olvidar crear los buckets de Storage
+    - No olvidar ejecutar los triggers SQL
+    - No olvidar configurar las variables de entorno
+    - Verificar que las políticas RLS permitan las operaciones necesarias
+    - No usar versiones diferentes de las dependencias
+
+CHECKLIST DE MIGRACIÓN
+================================================================================
+
+FASE 1: CONFIGURACIÓN INICIAL
+[ ] Instalar Node.js v18+
+[ ] Crear proyecto en Supabase
+[ ] Crear estructura de carpetas
+[ ] Instalar todas las dependencias con versiones exactas
+[ ] Configurar tsconfig.json
+[ ] Configurar next.config.ts
+[ ] Configurar postcss.config.mjs
+[ ] Configurar eslint.config.mjs
+[ ] Crear .env.local con credenciales de Supabase
+
+FASE 2: BASE DE DATOS
+[ ] Ejecutar supabase_schema.sql en Supabase
+[ ] Ejecutar supabase_triggers.sql en Supabase
+[ ] Crear bucket "productos" en Storage
+[ ] Crear bucket "banners" en Storage
+[ ] Configurar políticas RLS (si es necesario)
+[ ] Verificar que todas las tablas se crearon correctamente
+
+FASE 3: ARCHIVOS BASE
+[ ] Crear lib/supabase.ts
+[ ] Crear lib/supabase-client.ts
+[ ] Copiar lib/supabase-queries.ts completo
+[ ] Copiar lib/supabase-storage.ts completo
+[ ] Copiar lib/swal.ts completo
+[ ] Copiar lib/auth-helpers.ts completo
+[ ] Copiar lib/utils.ts completo
+[ ] Copiar types/database.ts completo
+
+FASE 4: COMPONENTES
+[ ] Copiar todos los componentes de components/
+[ ] Copiar components/admin/ completo
+[ ] Copiar components/Icons.tsx
+[ ] Verificar que todos los imports estén correctos
+
+FASE 5: CONTEXTOS
+[ ] Copiar contexts/AuthContext.tsx
+[ ] Verificar configuración de autenticación
+
+FASE 6: PÁGINAS DEL CLIENTE
+[ ] Copiar app/layout.tsx
+[ ] Copiar app/page.tsx (inicio)
+[ ] Copiar app/tienda/ completo
+[ ] Copiar app/producto/[id]/ completo
+[ ] Copiar app/carrito/ completo
+[ ] Copiar app/checkout/ completo
+[ ] Copiar todas las páginas informativas
+[ ] Copiar app/auth/ completo
+
+FASE 7: PÁGINAS DEL ADMIN
+[ ] Copiar app/admin/layout.tsx
+[ ] Copiar app/admin/page.tsx (dashboard)
+[ ] Copiar app/admin/pedidos/ completo
+[ ] Copiar app/admin/productos/ completo
+[ ] Copiar app/admin/clientes/ completo
+[ ] Copiar app/admin/analiticas/ completo
+[ ] Copiar app/admin/diseno/ completo
+[ ] Copiar app/admin/configuracion/ completo
+[ ] Copiar app/admin/ayuda/ completo
+
+FASE 8: VERIFICACIÓN
+[ ] Ejecutar npm run dev
+[ ] Verificar que no hay errores de compilación
+[ ] Verificar que todas las rutas funcionan
+[ ] Probar autenticación
+[ ] Probar crear/editar producto en admin
+[ ] Probar crear pedido desde cliente
+[ ] Verificar que las imágenes se suben correctamente
+[ ] Verificar que los datos se cargan correctamente
+[ ] Probar cambiar de pestaña (no debe recargar)
+[ ] Verificar diseño responsive
+
+FASE 9: PRODUCCIÓN
+[ ] Ejecutar npm run build
+[ ] Verificar que el build es exitoso
+[ ] Configurar variables de entorno de producción
+[ ] Desplegar en plataforma (Vercel, Netlify, etc.)
+[ ] Verificar que todo funciona en producción
+
+INFORMACIÓN ADICIONAL
+================================================================================
+
+URLs IMPORTANTES:
+- Desarrollo: http://localhost:3000
+- Admin: http://localhost:3000/admin
+- Callback Auth: http://localhost:3000/auth/callback
+
+ESTRUCTURA DE RUTAS:
+Cliente:
+- / - Inicio
+- /tienda - Tienda principal
+- /tienda/hombres - Productos hombres
+- /tienda/mujeres - Productos mujeres
+- /tienda/accesorios - Accesorios
+- /tienda/novedades - Novedades
+- /producto/[id] - Detalle de producto
+- /carrito - Carrito
+- /checkout - Checkout
+- /mi-cuenta - Mi cuenta
+- /mis-pedidos - Mis pedidos
+- /auth/login - Login
+
+Admin:
+- /admin - Dashboard
+- /admin/pedidos - Lista de pedidos
+- /admin/pedidos/[id] - Detalle de pedido
+- /admin/productos - Lista de productos
+- /admin/productos/nuevo - Crear producto
+- /admin/productos/editar/[id] - Editar producto
+- /admin/clientes - Lista de clientes
+- /admin/analiticas - Analíticas
+- /admin/diseno - Diseño
+- /admin/configuracion - Configuración
+- /admin/ayuda - Ayuda
+
+CONTACTO Y SOPORTE
+================================================================================
+
+Si encuentras problemas durante la migración:
+1. Verificar que todas las versiones sean exactas
+2. Verificar que el esquema de base de datos esté completo
+3. Verificar las variables de entorno
+4. Revisar la consola del navegador para errores
+5. Revisar los logs del servidor
+6. Verificar que los buckets de Storage existan
+
+NOTA FINAL
+================================================================================
+
+Este proyecto está completamente funcional y listo para producción.
+Todas las funcionalidades han sido probadas y optimizadas.
+El código sigue las mejores prácticas de Next.js 15 y React 19.
+
+IMPORTANTE: Guarda este documento junto con el código fuente.
+Es esencial para cualquier migración o actualización futura.
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================
+

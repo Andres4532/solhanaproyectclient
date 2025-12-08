@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Carrito de Compras</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3B82F6",
+            "background-light": "#F9FAFB",
+            "background-dark": "#101922",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-6 sm:px-10 lg:px-20 py-3 bg-white dark:bg-background-dark/50 sticky top-0 z-10 backdrop-blur-sm">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-slate-900 dark:text-slate-100">
+<div class="size-6 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_6_319)">
+<path d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z" fill="currentColor"></path>
+</g>
+<defs>
+<clipPath id="clip0_6_319">
+<rect fill="white" height="48" width="48"></rect>
+</clipPath>
+</defs>
+</svg>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em]">SOLHANA</h2>
+</div>
+<div class="hidden md:flex flex-1 items-center gap-9">
+<a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Tienda</a>
+<a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Novedades</a>
+<a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="#">Nosotros</a>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined text-xl">search</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined text-xl">shopping_bag</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined text-xl">person</span>
+</button>
+</div>
+</header>
+<main class="flex-1 px-4 sm:px-6 lg:px-8 py-8 lg:py-16">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+<div class="lg:col-span-2">
+<div class="flex flex-wrap justify-between items-baseline gap-3 pb-6">
+<p class="text-slate-900 dark:text-slate-100 text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Tu Carrito</p>
+<p class="text-slate-500 dark:text-slate-400 text-lg font-medium">3 artículos</p>
+</div>
+<div class="flow-root">
+<ul class="-my-6 divide-y divide-slate-200 dark:divide-slate-800" role="list">
+<li class="flex py-6">
+<div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+<img class="h-full w-full object-cover object-center" data-alt="Modern Cream Armchair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB7tcvN6khFWQ7KISa0s6k6-DpWnwwpVain4sGiNk3DPTU9BgSIGkFOv9n1LvMW0haYtz5O4EfZ5m5kWLhrXWfc14RXWG5Oz4Ji1VhDUeNLazOjTL44iIzjNyUufmR3dE6Rfa9el7OFdD98es06UEJUBYzRDvvamO3e2SQqvxURZc_R0d6-wC7qZmMERDkIIac9unl3kJol0yr6yF1__LDipAn98o1odjYDqnpWwrlam4s281Nzphx_BhBcEWbzKaQH4A82BjNdeuV"/>
+</div>
+<div class="ml-4 flex flex-1 flex-col">
+<div>
+<div class="flex justify-between text-base font-medium text-slate-900 dark:text-slate-100">
+<h3><a href="#">Sillón Moderno</a></h3>
+<p class="ml-4">$299.00</p>
+</div>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Crema</p>
+</div>
+<div class="flex flex-1 items-end justify-between text-sm">
+<div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg">
+<button class="px-2 py-1 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-400">-</button>
+<input class="w-10 text-center bg-transparent border-0 text-slate-900 dark:text-slate-100 focus:ring-0 p-0" type="text" value="1"/>
+<button class="px-2 py-1 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-400">+</button>
+</div>
+<div class="flex">
+<button class="font-medium text-primary hover:text-primary/80 flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-base">delete</span>
+                            Eliminar
+                          </button>
+</div>
+</div>
+</div>
+</li>
+<li class="flex py-6">
+<div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+<img class="h-full w-full object-cover object-center" data-alt="Ceramic Table Lamp" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnKLRs0hleo6kYQgY0zCsle9l2m8MXwlHhblGTxv4JCpovLdoX20QGHd2DKyVI5hKymBmAPtCId4Lfk_0BUyXgFuklCSLrFhTpOF4mTvbxTTnngXzdBIbpWYpgz_hGxe82e7P3oj5TbqH_hEbXtP7moAhU5jqmruETHAyMixb2HJXqjJaglG8keYxGKtkBtap8YtUKJ6QVn5NTo_RLvmEhSTuvhc68z4TRDQxd1s4zkLmosAZcXV2iRQjXloJuGDLVL5jF2WlCQ4-p"/>
+</div>
+<div class="ml-4 flex flex-1 flex-col">
+<div>
+<div class="flex justify-between text-base font-medium text-slate-900 dark:text-slate-100">
+<h3><a href="#">Lámpara de Mesa de Cerámica</a></h3>
+<p class="ml-4">$79.00</p>
+</div>
+</div>
+<div class="flex flex-1 items-end justify-between text-sm">
+<div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg">
+<button class="px-2 py-1 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-400">-</button>
+<input class="w-10 text-center bg-transparent border-0 text-slate-900 dark:text-slate-100 focus:ring-0 p-0" type="text" value="2"/>
+<button class="px-2 py-1 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-400">+</button>
+</div>
+<div class="flex">
+<button class="font-medium text-primary hover:text-primary/80 flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-base">delete</span>
+                            Eliminar
+                          </button>
+</div>
+</div>
+</div>
+</li>
+<li class="flex py-6">
+<div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+<img class="h-full w-full object-cover object-center" data-alt="Abstract Wall Art" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCluFAri2juHuHcqqVEZVT3jqQtMudpuZ7DImcMDXoguIL-Aw0jhNgK2_5gYjcAZC6ggy42Q9hnA2L-rNb7O0D1KebCLcU8hg8QobWAoKFL7Sz0mXGSq3nknE7vp-3xxNjgmOozLR8NJfg2DBV0JsaX7c7mCDIG7iAveKmY2AtWSNyoo4UjHQ5x4NRSHw_g7qtn60MI-8oBXSvzNoEdLoTfGJxc3NGh0LVWtXPrwhO-Qbr12b3bHP2ELUrBbwjUg6vGLLa9goyGXeJn"/>
+</div>
+<div class="ml-4 flex flex-1 flex-col">
+<div>
+<div class="flex justify-between text-base font-medium text-slate-900 dark:text-slate-100">
+<h3><a href="#">Arte de Pared Abstracto</a></h3>
+<p class="ml-4">$120.00</p>
+</div>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Lienzo</p>
+</div>
+<div class="flex flex-1 items-end justify-between text-sm">
+<div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg">
+<button class="px-2 py-1 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-400">-</button>
+<input class="w-10 text-center bg-transparent border-0 text-slate-900 dark:text-slate-100 focus:ring-0 p-0" type="text" value="1"/>
+<button class="px-2 py-1 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-400">+</button>
+</div>
+<div class="flex">
+<button class="font-medium text-primary hover:text-primary/80 flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-base">delete</span>
+                            Eliminar
+                          </button>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="mt-6">
+<a class="flex items-center gap-2 text-primary hover:text-primary/80 font-medium" href="#">
+<span class="material-symbols-outlined">arrow_back</span>
+                  Seguir Comprando
+                </a>
+</div>
+</div>
+<div class="lg:col-span-1">
+<div class="bg-white dark:bg-slate-900/50 rounded-xl p-6 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.2)] space-y-6">
+<div class="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-lg">
+<div class="flex justify-between items-center text-sm">
+<p class="text-slate-600 dark:text-slate-300">Subtotal</p>
+<p class="font-bold text-slate-900 dark:text-slate-100">Bs457,00</p>
+</div>
+<div class="flex justify-between items-center text-sm mt-2">
+<p class="text-slate-600 dark:text-slate-300">Envío</p>
+<p class="font-bold text-slate-900 dark:text-slate-100">Gratis</p>
+</div>
+<div class="border-t border-slate-200 dark:border-slate-700 my-3"></div>
+<div class="flex justify-between items-center font-bold text-lg">
+<p class="text-slate-900 dark:text-slate-100">Total</p>
+<p class="text-slate-900 dark:text-slate-100">Bs457,00</p>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="font-bold text-center text-slate-900 dark:text-slate-100 text-lg">Rellena los datos y realiza tu pedido</h3>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="name">Nombre y Apellido</label>
+<div class="relative">
+<span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+<span class="material-symbols-outlined text-xl">person</span>
+</span>
+<input class="block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm focus:border-primary focus:ring-primary pl-10 sm:text-sm" id="name" name="name" placeholder="Nombre y Apellido" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="phone">Teléfono/WhatsApp</label>
+<div class="relative">
+<span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 dark:text-slate-400 text-sm">+591</span>
+<input class="block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm focus:border-primary focus:ring-primary pl-14 sm:text-sm" id="phone" name="phone" placeholder="Teléfono/WhatsApp" type="tel"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="city">Ciudad</label>
+<select class="block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="city" name="city">
+<option>Selecciona tu Ciudad</option>
+<option>La Paz</option>
+<option>Cochabamba</option>
+<option>Santa Cruz</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="address">Dirección Completa</label>
+<div class="relative">
+<span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+<span class="material-symbols-outlined text-xl">location_on</span>
+</span>
+<input class="block w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm focus:border-primary focus:ring-primary pl-10 sm:text-sm" id="address" name="address" placeholder="Dirección y Referencias Adicionales" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+<label class="flex items-start cursor-pointer" for="priority-shipping">
+<input class="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" id="priority-shipping" type="checkbox"/>
+<span class="ml-3 text-sm text-slate-800 dark:text-slate-200">
+<span class="font-bold">Agrega ENVÍO PRIORITARIO</span> por solo <span class="font-bold">Bs7,00</span>
+<span class="block text-xs text-slate-600 dark:text-slate-400">Su pedido estará como prioridad en la entrega</span>
+</span>
+</label>
+</div>
+<div class="space-y-4">
+<p class="text-sm font-medium text-slate-900 dark:text-slate-100">Método de pago</p>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-center text-sm font-medium text-slate-700 dark:text-slate-300 ring-2 ring-transparent has-[:checked]:border-primary has-[:checked]:bg-blue-50 has-[:checked]:text-primary dark:has-[:checked]:bg-slate-900/50 dark:has-[:checked]:border-primary">
+<input checked="" class="sr-only" name="payment_method" type="radio"/>
+<span>Efectivo</span>
+</label>
+<label class="flex cursor-pointer items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-center text-sm font-medium text-slate-700 dark:text-slate-300 ring-2 ring-transparent has-[:checked]:border-primary has-[:checked]:bg-blue-50 has-[:checked]:text-primary dark:has-[:checked]:bg-slate-900/50 dark:has-[:checked]:border-primary">
+<input class="sr-only" name="payment_method" type="radio"/>
+<span>Transferencia QR</span>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<button class="flex w-full items-center justify-center rounded-lg border border-transparent bg-green-500 px-6 py-3.5 text-base font-bold text-white shadow-sm hover:bg-green-600 transition-colors">
+                    COMPLETAR PEDIDO - Bs457,00
+                  </button>
+<p class="text-center text-xs text-slate-500 dark:text-slate-400">Una vez realices tu pedido, te enviaremos un mensaje por WhatsApp para coordinar la entrega del mismo.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-slate-100 dark:bg-slate-900/50">
+<div class="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
+<div class="flex justify-center space-x-6 md:order-2">
+<a class="text-slate-400 hover:text-slate-500" href="#">
+<span class="sr-only">Facebook</span>
+<svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+<path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path>
+</svg>
+</a>
+</div>
+<div class="mt-8 md:order-1 md:mt-0">
+<p class="text-center text-xs leading-5 text-slate-500 dark:text-slate-400">© 2024 SOLHANA. Todos los derechos reservados.</p>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

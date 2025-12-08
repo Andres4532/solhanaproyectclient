@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SOLHANA - Colección de Zapatillas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style type="text/tailwindcss">
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 300,
+      'GRAD' 0,
+      'opsz' 24;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background-color: #111827;
+        border-radius: 9999px;
+        cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background-color: #111827;
+        border-radius: 9999px;
+        cursor: pointer;
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3B82F6",
+            "background-light": "#FFFFFF",
+            "background-dark": "#101922",
+            "text-light": "#111827",
+            "text-dark": "#EAEAEA",
+            "text-secondary-light": "#6B7280",
+            "text-secondary-dark": "#A0B4C8",
+            "border-light": "#E5E7EB",
+            "border-dark": "#2a3642",
+            "card-light": "#F9FAFB",
+            "card-dark": "#182431"
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col">
+<header class="sticky top-0 z-50 w-full border-b border-border-light dark:border-border-dark bg-white/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center justify-between">
+<div class="flex items-center gap-10">
+<a class="flex items-center gap-2 text-text-light dark:text-text-dark" href="#">
+<div class="h-6 w-6 rounded-full bg-blue-500"></div>
+<h1 class="text-xl font-bold tracking-tight">SOLHANA</h1>
+</a>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Tienda</a>
+<a class="text-sm font-medium text-primary" href="#">Categorías</a>
+<a class="text-sm font-medium text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Sobre Nosotros</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end items-center gap-4">
+<div class="flex gap-2">
+<button class="flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 hover:bg-gray-100 dark:hover:bg-card-dark/60 transition-colors">
+<span class="material-symbols-outlined text-xl text-text-secondary-light dark:text-text-secondary-dark">search</span>
+</button>
+<button class="flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 hover:bg-gray-100 dark:hover:bg-card-dark/60 transition-colors">
+<span class="material-symbols-outlined text-xl text-text-secondary-light dark:text-text-secondary-dark">person</span>
+</button>
+<button class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 w-10 hover:bg-gray-100 dark:hover:bg-card-dark/60 transition-colors">
+<span class="material-symbols-outlined text-xl text-text-secondary-light dark:text-text-secondary-dark">shopping_bag</span>
+<span class="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+<div class="mb-8 lg:mb-12">
+<div class="relative h-64 md:h-80 w-full overflow-hidden rounded-xl bg-gray-200">
+<img alt="Banner de Zapatillas" class="h-full w-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5vd9V5OuGV3QhTWTcqV25xhCgNPsIjzze6_oaukkatHqI0rFfPhQw-pHQ8Y23imlhkmFxrZGMDJAt-SzAt7J9wARyjYxESmrW41uuux28mb-5B_MBPn6iX-Kla_Sl3mY7TWmF58sQVQFXCw0GmeNlbjMJFEglvvd_NKNeHmnqqNXmpOKolaFrazrhl9lM4Eq9FnA3TvYen6clQTF0w2fGdBsd51F4aVD4AsZjbWZ9QZbAN_8bAjRGwz11aCah9UhQ4rywzghT1R12"/>
+<div class="absolute inset-0 bg-black/40"></div>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+<h2 class="text-3xl md:text-5xl font-extrabold tracking-tight">Colección de Zapatillas</h2>
+<p class="mt-2 md:mt-4 max-w-2xl text-base md:text-lg">Descubre los últimos modelos y encuentra tu par perfecto.</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8 xl:gap-12">
+<aside class="col-span-1 lg:col-span-1">
+<div class="sticky top-24 space-y-8">
+<div class="flex justify-between items-center">
+<h3 class="text-lg font-bold">Filtros</h3>
+<button class="text-sm font-medium text-primary hover:underline">Limpiar todo</button>
+</div>
+<div class="space-y-4">
+<h4 class="font-semibold">Categoría</h4>
+<div class="space-y-3">
+<a class="block text-sm text-primary font-semibold" href="#">Zapatillas</a>
+<a class="block text-sm text-text-secondary-light hover:text-text-light transition-colors" href="#">Botas</a>
+<a class="block text-sm text-text-secondary-light hover:text-text-light transition-colors" href="#">Sandalias</a>
+<a class="block text-sm text-text-secondary-light hover:text-text-light transition-colors" href="#">Zapatos Formales</a>
+</div>
+</div>
+<div class="border-t border-border-light dark:border-border-dark pt-6 space-y-4">
+<h4 class="font-semibold">Tipo de Calzado</h4>
+<div class="space-y-3">
+<label class="flex items-center space-x-3 cursor-pointer">
+<input class="form-checkbox h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50" type="checkbox"/>
+<span class="text-sm">Running</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer">
+<input checked="" class="form-checkbox h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50" type="checkbox"/>
+<span class="text-sm">Casual</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer">
+<input class="form-checkbox h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50" type="checkbox"/>
+<span class="text-sm">Skate</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer">
+<input class="form-checkbox h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50" type="checkbox"/>
+<span class="text-sm">Training</span>
+</label>
+</div>
+</div>
+<div class="border-t border-border-light dark:border-border-dark pt-6 space-y-4">
+<h4 class="font-semibold">Precio</h4>
+<div class="relative pt-1">
+<input class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer" max="500" min="0" type="range" value="50"/>
+<input class="w-full h-1.5 bg-transparent rounded-lg appearance-none cursor-pointer absolute top-1 left-0" max="500" min="0" type="range" value="350"/>
+</div>
+<div class="flex justify-between text-sm text-text-secondary-light dark:text-text-secondary-dark mt-2">
+<span>$50</span>
+<span>$350</span>
+</div>
+</div>
+<div class="border-t border-border-light dark:border-border-dark pt-6 space-y-4">
+<h4 class="font-semibold">Talla</h4>
+<div class="grid grid-cols-4 gap-2">
+<button class="flex items-center justify-center p-2 h-10 border rounded-md text-sm font-medium hover:border-gray-900 transition-colors">39</button>
+<button class="flex items-center justify-center p-2 h-10 border rounded-md text-sm font-medium bg-gray-900 text-white border-gray-900">40</button>
+<button class="flex items-center justify-center p-2 h-10 border rounded-md text-sm font-medium hover:border-gray-900 transition-colors">41</button>
+<button class="flex items-center justify-center p-2 h-10 border rounded-md text-sm font-medium hover:border-gray-900 transition-colors">42</button>
+<button class="flex items-center justify-center p-2 h-10 border rounded-md text-sm font-medium bg-gray-900 text-white border-gray-900">43</button>
+<button class="flex items-center justify-center p-2 h-10 border rounded-md text-sm font-medium text-gray-400 border-gray-200 cursor-not-allowed">44</button>
+<button class="flex items-center justify-center p-2 h-10 border rounded-md text-sm font-medium hover:border-gray-900 transition-colors">45</button>
+</div>
+</div>
+</div>
+</aside>
+<section class="col-span-1 lg:col-span-3">
+<div class="flex flex-wrap justify-between items-baseline gap-4 mb-8">
+<div>
+<h2 class="text-3xl font-bold tracking-tight">Zapatillas</h2>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm mt-1">Mostrando 12 de 128 productos</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Ordenar por:</span>
+<select class="form-select rounded-lg border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-sm font-medium focus:ring-primary/50 focus:border-primary/50 pl-4 pr-10 py-2">
+<option>Popularidad</option>
+<option selected="">Precio: Menor a Mayor</option>
+<option>Precio: Mayor a Menor</option>
+<option>Novedades</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-12">
+<div class="group relative flex flex-col">
+<div class="relative w-full overflow-hidden rounded-xl bg-card-light">
+<a href="#">
+<img class="aspect-[3/4] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" data-alt="Red and black running shoe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBWiLExpLG0NZJE31zTXVhgdyxbeB6RezWuIunHywgudDIK7GcWMZUTZ5HOto-V8JbtDQCoOZAucPRqimEiFLVJDcvqzuwAscbFOFyiM1ern7vR1FMHDHeUZj8maAQOCJ_tOYztsdCvIFmRBGXfMYXHK5rXG0O5nBzIqDEFshAhYDnCpTM2w463BoON04np-1u-3eFJT_mOpr1yymFTGO07zi3CdQK1TE_VkAbQRAkYbU66k2QbixhOlRbwkQoxaKxZeLJ6F4sIRcV"/>
+</a>
+<span class="absolute top-3 left-3 inline-flex items-center rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-0.5 text-xs font-semibold">Best Seller</span>
+</div>
+<div class="mt-4 flex-1">
+<h3 class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Zapatillas</h3>
+<h4 class="mt-1 text-base font-semibold text-text-light dark:text-text-dark">
+<a href="#">Classic Runner</a>
+</h4>
+<p class="mt-2 text-base font-semibold text-text-light dark:text-text-dark">$89.99</p>
+</div>
+<button class="mt-4 w-full bg-gray-900 text-white rounded-lg h-10 text-sm font-semibold hover:bg-gray-800 transition-colors">Añadir al carrito</button>
+</div>
+<div class="group relative flex flex-col">
+<div class="relative w-full overflow-hidden rounded-xl bg-card-light">
+<a href="#">
+<img class="aspect-[3/4] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" data-alt="White sneaker with pastel accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv3_4MU9hGqsrAmbFPl1KVOkI-QkGnlrNvFalEopTL0MJyeHgFMOK8HaMOu61hODllkCBK77-uJett2OvnFYebdBrKOBlWHCRyM83JXyVpBR4FZCDNzDEE250fNk2m_-HsBV7KqCJwF4HOCJdAr_GGm3XTAwjCpgxO3Vn0SFHbicMD6hmOyPRMK9fCyVTWs6ivviD7k2CDSSanq9vS5I2fRK6BTMGVy8X9hN8s7a9YJSAqJs8Flxz2Biywmc6co3bq8Dwe5Ujx1JlP"/>
+</a>
+<span class="absolute top-3 left-3 inline-flex items-center rounded-full bg-blue-100 text-blue-800 px-2.5 py-0.5 text-xs font-semibold">New</span>
+</div>
+<div class="mt-4 flex-1">
+<h3 class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Zapatillas</h3>
+<h4 class="mt-1 text-base font-semibold text-text-light dark:text-text-dark">
+<a href="#">Urban Walker</a>
+</h4>
+<p class="mt-2 text-base font-semibold text-text-light dark:text-text-dark">$120.00</p>
+</div>
+<button class="mt-4 w-full bg-gray-900 text-white rounded-lg h-10 text-sm font-semibold hover:bg-gray-800 transition-colors">Añadir al carrito</button>
+</div>
+<div class="group relative flex flex-col">
+<div class="relative w-full overflow-hidden rounded-xl bg-card-light">
+<a href="#">
+<img class="aspect-[3/4] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" data-alt="White and gray classic sneaker" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2TjzUbYmvpHQ80gO0Zq5MmvD7nC6abUJ6z6HMLsi9ZGp0DpuDWUTQR86yO1hIJZesLzPuhh2_zElXaT6V_sUKrrrxCgNpFdT_kgf6lc4md5MVc3OD1sqIh5TDgQMlfahMhrFML2IZyVM6OM-8kmHp6dTuSRnnsqZq1BuH7c62RCxpA1o84N0WOCH7-ML3xF58QTJG93cjuOuvdBJ8rwcSt4AQLFqg4Of-vtKZOYdlzDtkL_JLxeEOdpccKGjGUPQ9Wkv_tE-fz9gP"/>
+</a>
+<span class="absolute top-3 left-3 inline-flex items-center rounded-full bg-rose-100 text-rose-800 px-2.5 py-0.5 text-xs font-semibold">-30%</span>
+</div>
+<div class="mt-4 flex-1">
+<h3 class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Zapatillas</h3>
+<h4 class="mt-1 text-base font-semibold text-text-light dark:text-text-dark">
+<a href="#">Street Smart</a>
+</h4>
+<div class="mt-2 flex items-baseline gap-2">
+<p class="text-base font-semibold text-rose-600">$95.50</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark line-through">$136.40</p>
+</div>
+</div>
+<button class="mt-4 w-full bg-gray-900 text-white rounded-lg h-10 text-sm font-semibold hover:bg-gray-800 transition-colors">Añadir al carrito</button>
+</div>
+<div class="group relative flex flex-col">
+<div class="relative w-full overflow-hidden rounded-xl bg-card-light">
+<a href="#"><img class="aspect-[3/4] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" data-alt="Blue and white running shoe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEkjI3HXTIVSl4GqZmMsr6X1rvX-F33MnEQZ1KVPfMkEVpS7I76m7ofbTqMBMRhvnDLFNNXQPSXbyyG5QE2q7AQFzueAaB3B5lROKsw4-zBc9B_Wv_FMJ6us5HHSLsx095Wd2g1jhIfQRfVJ_d9lBL2emh5YL3Riovdjsja4arIwc0ExhvrrzrZD7zLDSkf0gEajskBd1Xte_oe2wCR5KlXOqsNALNRHMmbAQ8ozKPrbmCPTFtehb1bQc3--QjvMjNMRFj4vV-rl2K"/></a>
+</div>
+<div class="mt-4 flex-1">
+<h3 class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Zapatillas</h3>
+<h4 class="mt-1 text-base font-semibold text-text-light dark:text-text-dark"><a href="#">Aero Glide</a></h4>
+<p class="mt-2 text-base font-semibold text-text-light dark:text-text-dark">$110.00</p>
+</div>
+<button class="mt-4 w-full bg-gray-900 text-white rounded-lg h-10 text-sm font-semibold hover:bg-gray-800 transition-colors">Añadir al carrito</button>
+</div>
+<div class="group relative flex flex-col">
+<div class="relative w-full overflow-hidden rounded-xl bg-card-light">
+<a href="#"><img class="aspect-[3/4] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" data-alt="Pair of brown leather shoes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5vd9V5OuGV3QhTWTcqV25xhCgNPsIjzze6_oaukkatHqI0rFfPhQw-pHQ8Y23imlhkmFxrZGMDJAt-SzAt7J9wARyjYxESmrW41uuux28mb-5B_MBPn6iX-Kla_Sl3mY7TWmF58sQVQFXCw0GmeNlbjMJFEglvvd_NKNeHmnqqNXmpOKolaFrazrhl9lM4Eq9FnA3TvYen6clQTF0w2fGdBsd51F4aVD4AsZjbWZ9QZbAN_8bAjRGwz11aCah9UhQ4rywzghT1R12"/></a>
+</div>
+<div class="mt-4 flex-1">
+<h3 class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Zapatillas</h3>
+<h4 class="mt-1 text-base font-semibold text-text-light dark:text-text-dark"><a href="#">City Canvas</a></h4>
+<p class="mt-2 text-base font-semibold text-text-light dark:text-text-dark">$75.00</p>
+</div>
+<button class="mt-4 w-full bg-gray-900 text-white rounded-lg h-10 text-sm font-semibold hover:bg-gray-800 transition-colors">Añadir al carrito</button>
+</div>
+<div class="group relative flex flex-col">
+<div class="relative w-full overflow-hidden rounded-xl bg-card-light">
+<a href="#"><img class="aspect-[3/4] h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" data-alt="White high-top sneaker with red checkmark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMuyIqJt5BilawHKEsBCUog7fIF2ggWRsjNQgcWa2C1BRCEwSrY3oGCMDxityht_oOz9x-h_TyMXjrKu6EPIxr8of0ecX7jwEtHn4qylFEa1BHrZ18MwoHUP3P1C5DtO6J5JIiuc59hSm1TVIXiBswikTKTWG5jiCD6PFk8efoz85PPHjhi8bHiI87mpp_1WO1a4z4lNd8WEeyZy_fqBmqwyDXrWafRUnmN9KN5UcxXVxLzX5mbgFZHfjSVfb-YWbEh1xGZxNdooHS"/></a>
+</div>
+<div class="mt-4 flex-1">
+<h3 class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Zapatillas</h3>
+<h4 class="mt-1 text-base font-semibold text-text-light dark:text-text-dark"><a href="#">Retro Kick</a></h4>
+<p class="mt-2 text-base font-semibold text-text-light dark:text-text-dark">$99.00</p>
+</div>
+<button class="mt-4 w-full bg-gray-900 text-white rounded-lg h-10 text-sm font-semibold hover:bg-gray-800 transition-colors">Añadir al carrito</button>
+</div>
+</div>
+<nav class="flex items-center justify-center mt-12 pt-8 border-t border-border-light dark:border-border-dark">
+<ul class="flex items-center -space-x-px h-10 text-sm">
+<li>
+<a class="flex items-center justify-center px-3 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700" href="#">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700" href="#">1</a>
+</li>
+<li>
+<a aria-current="page" class="z-10 flex items-center justify-center px-4 h-10 leading-tight text-white bg-gray-900 border border-gray-900 hover:bg-gray-800" href="#">2</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700" href="#">3</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300" href="#">...</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700" href="#">10</a>
+</li>
+<li>
+<a class="flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-s-0 border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700" href="#">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</a>
+</li>
+</ul>
+</nav>
+</section>
+</div>
+</main>
+<footer class="bg-gray-50 dark:bg-card-dark border-t border-border-light dark:border-border-dark mt-auto">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+<div class="col-span-2 md:col-span-4 lg:col-span-1">
+<a class="flex items-center gap-2 text-text-light dark:text-text-dark" href="#">
+<div class="h-6 w-6 rounded-full bg-blue-500"></div>
+<h2 class="text-xl font-bold tracking-tight">SOLHANA</h2>
+</a>
+<p class="mt-4 text-sm text-text-secondary-light dark:text-text-secondary-dark max-w-xs">La mejor selección de zapatillas para tu estilo de vida.</p>
+</div>
+<div>
+<h3 class="text-sm font-semibold tracking-wider uppercase text-text-light dark:text-text-dark">Tienda</h3>
+<ul class="mt-4 space-y-3">
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Novedades</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Hombre</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Mujer</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Ofertas</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold tracking-wider uppercase text-text-light dark:text-text-dark">Información</h3>
+<ul class="mt-4 space-y-3">
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Sobre Nosotros</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Envíos y Devoluciones</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Preguntas Frecuentes</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-sm font-semibold tracking-wider uppercase text-text-light dark:text-text-dark">Legal</h3>
+<ul class="mt-4 space-y-3">
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Términos y Condiciones</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Política de Privacidad</a></li>
+<li><a class="text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">Política de Cookies</a></li>
+</ul>
+</div>
+<div class="col-span-2 md:col-span-1">
+<h3 class="text-sm font-semibold tracking-wider uppercase text-text-light dark:text-text-dark">Suscríbete</h3>
+<p class="mt-4 text-sm text-text-secondary-light dark:text-text-secondary-dark">Recibe ofertas exclusivas y novedades en tu email.</p>
+<form class="mt-4 flex">
+<input class="form-input flex-1 min-w-0 rounded-l-md border-border-light dark:border-border-dark focus:ring-primary/50 focus:border-primary/50" placeholder="tu@email.com" type="email"/>
+<button class="px-4 py-2 bg-gray-900 text-white rounded-r-md text-sm font-semibold hover:bg-gray-800">Enviar</button>
+</form>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-border-light dark:border-border-dark flex flex-col sm:flex-row justify-between items-center">
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">© 2024 SOLHANA. Todos los derechos reservados.</p>
+<div class="flex gap-4 mt-4 sm:mt-0">
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">
+<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.675 0h-21.35C.525 0 0 .525 0 1.175v21.35C0 23.475.525 24 1.175 24H12.82v-9.29h-3.128V11.16H12.82V8.65c0-3.1 1.893-4.788 4.658-4.788 1.325 0 2.463.099 2.795.143v3.24h-1.92c-1.503 0-1.795.715-1.795 1.763v2.31h3.587l-.467 3.54H16.56V24h6.115c.65 0 1.175-.525 1.175-1.175V1.175C24 .525 23.475 0 22.675 0z"></path></svg>
+</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">
+<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.012 3.584-.07 4.85c-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.012-3.584.07-4.85C2.253 3.854 3.774 2.31 7.026 2.163 8.291 2.105 8.67 2.093 12 2.093m0-2.093c-3.264 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.684-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.684.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.058-1.281.072-1.684.072-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98C15.667.014 15.264 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z"></path></svg>
+</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light transition-colors" href="#">
+<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.223.085 4.934 4.934 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>

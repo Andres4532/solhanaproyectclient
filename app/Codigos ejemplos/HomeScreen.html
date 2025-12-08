@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Página de Inicio de SOLHANA</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#137fec", "background-light": "#f6f7f8", "background-dark": "#101922", "primary-text-light": "#1f2937", "primary-text-dark": "#f3f4f6", "secondary-text-light": "#6b7280", "secondary-text-dark": "#9ca3af", "card-light": "#ffffff", "card-dark": "#1a2734", "border-light": "#e5e7eb", "border-dark": "#374151"}, fontFamily: {display: "Manrope"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark h-16">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary-text-light dark:text-primary-text-dark">
+<div class="size-7 text-primary">
+<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.59L5.41 12 4 13.41 11 20.41l10-10L19.59 9 11 17.59z"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold">SOLHANA</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary-text-light dark:hover:text-primary-text-dark text-sm font-medium" href="#">Tienda</a>
+<a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary-text-light dark:hover:text-primary-text-dark text-sm font-medium" href="#">Categorías</a>
+<a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary-text-light dark:hover:text-primary-text-dark text-sm font-medium" href="#">Sobre Nosotros</a>
+</nav>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full hover:bg-black/5 dark:hover:bg-white/5 text-primary-text-light dark:text-primary-text-dark">
+<span class="material-symbols-outlined text-xl">search</span>
+</button>
+<button class="flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full hover:bg-black/5 dark:hover:bg-white/5 text-primary-text-light dark:text-primary-text-dark">
+<span class="material-symbols-outlined text-xl">person_outline</span>
+</button>
+<button class="relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full hover:bg-black/5 dark:hover:bg-white/5 text-primary-text-light dark:text-primary-text-dark">
+<span class="material-symbols-outlined text-xl">shopping_bag</span>
+<span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1">
+<div class="px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+<div class="container mx-auto">
+<div class="w-full relative overflow-hidden rounded-xl">
+<div class="flex transition-transform duration-500" style="transform: translateX(0%);">
+<a class="w-full flex-shrink-0" href="#">
+<div class="flex min-h-[380px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-8 md:p-12 text-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCzN5wgkjuzeP4tfLsEPf_AMhtd-E0DuEKWVu-va3mqz5un6slMQ4SbLXyUwRpEDyit3MLbHkEfMCy_KR_U41TFXKLJx2-xoK7awgNonTTB_NktWwl2xV7iGiqau8ExlI-3SXqkHWHf0sdDp6BZidqFdj8-dAJbj-hk2fxnZqwxIhQkHh6TaDvcWjqZm20RfjK7ko5quyIKv8VUNnLnr5aDocZCZd2wdkeF5-BHZmCVYhI46hunG7tTD4MAO7sdOIDqXtN2QYAFnurN");'>
+<div class="flex flex-col gap-3 max-w-md">
+<h1 class="text-white text-3xl md:text-5xl font-extrabold leading-tight">Descubre Nuestra Nueva Colección</h1>
+<p class="text-white/90 text-base md:text-lg font-normal">Explora las últimas tendencias y encuentra tus nuevas piezas favoritas.</p>
+</div>
+<button class="mt-3 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 px-6 bg-primary text-white text-base font-bold transition-transform hover:scale-105">
+<span>Explorar Ahora</span>
+</button>
+</div>
+</a>
+<a class="w-full flex-shrink-0" href="#">
+<div class="flex min-h-[380px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-8 md:p-12 text-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBsoP3XFvHfyGSaGPV3WvCN5I7bPAcHW7RsOGc_U8lE31jpGy4RUloPFWuw2nKieSncXrGsAWaDmcwSfi4G3t025n3eHwCumaujDybktE884HwJlDnjkVhDHFCoV5Sr2y4IizfkiiO68n7CMB16-g5Ta_2Nk8qAWFsxDiZTA3-a96qc6qDoUPilDjhKoUJQeaJVQ-3yGSlqRvodKrMtSd0pUJvn4LMkWD0jPgahRzkIOPfzxCZ22vHkm8R-GTiRIV8DQaMl3oxWJ8VC");'>
+<div class="flex flex-col gap-3 max-w-md">
+<h1 class="text-white text-3xl md:text-5xl font-extrabold leading-tight">Estilo para Hombres</h1>
+<p class="text-white/90 text-base md:text-lg font-normal">Encuentra los mejores atuendos para cada ocasión.</p>
+</div>
+<button class="mt-3 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 px-6 bg-primary text-white text-base font-bold transition-transform hover:scale-105">
+<span>Ver Colección</span>
+</button>
+</div>
+</a>
+<a class="w-full flex-shrink-0" href="#">
+<div class="flex min-h-[380px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-8 md:p-12 text-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCpISKiHYJMdjhNYisMP_FjSq0ug3UY3RfqhyALOn5bh2BZMT_e3hwKsejv1YfKKB-56wc7sl81OD1nrrfAMk4MyfS3Y1Y3hkWFM3dDlGduy5XwPb2_2qbWWlk_Y9bqqyarbtrJBinTLg4KQZp_R07b6ikNECOt908Xbw3RYNi2pgEAAjQitY_FiPIMXDP6kZq59BeYco7PlbkahL_u6RUDz2J6z1rrELjRd0zDj-UeK7sIwLg4BeL2PhAYSODLZQm_1QsMMZGjLX9u");'>
+<div class="flex flex-col gap-3 max-w-md">
+<h1 class="text-white text-3xl md:text-5xl font-extrabold leading-tight">Accesorios Esenciales</h1>
+<p class="text-white/90 text-base md:text-lg font-normal">Eleva tu look con nuestra selección de accesorios.</p>
+</div>
+<button class="mt-3 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 px-6 bg-primary text-white text-base font-bold transition-transform hover:scale-105">
+<span>Descubrir</span>
+</button>
+</div>
+</a>
+<a class="w-full flex-shrink-0" href="#">
+<div class="flex min-h-[380px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-8 md:p-12 text-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBcsHYfn8Wnla3Aeyr4wctevT59DhYVCvMK4xM40Mcz4fivJGNeX_uEqsNBqOr4X1AeKdASWkobkO8grHJMHLgCwBwdaf8PHZggYm5_aKfy3L5iUkYYr8DpcJK9TxTKu8v9yEiNNW8C4UnU-w6g0Fca1QYr9_P1oW92vR7e_Ig7481K8AfAzj8ds8joU_nA_lu_4Exr5DEodLpQrgrA3dWT-XPiDIyZiWppx4xTlozHbejJhFhktsy_E_LsGaMj-4Dk7vx5bV0MZXqO");'>
+<div class="flex flex-col gap-3 max-w-md">
+<h1 class="text-white text-3xl md:text-5xl font-extrabold leading-tight">Calzado de Temporada</h1>
+<p class="text-white/90 text-base md:text-lg font-normal">Pisa fuerte con los últimos modelos de zapatillas y zapatos.</p>
+</div>
+<button class="mt-3 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 px-6 bg-primary text-white text-base font-bold transition-transform hover:scale-105">
+<span>Comprar Calzado</span>
+</button>
+</div>
+</a>
+<a class="w-full flex-shrink-0" href="#">
+<div class="flex min-h-[380px] flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center p-8 md:p-12 text-center" style='background-image: linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAouyJXlUJtmKnYyx-cqvOF5waWAsjqpGMlp92diRKhdiRsUYjo4zYemzRD4GbQRX19KlO2rA22-jtJmVMuJCJ2JNVNIgOCA0Wv7_egvyJsMVuAF_ar7cbYwdG9SYJ4yFLl4OnCw_qOaAXEBEANfxX6RkVBkG4Lg5_oqpXA8vpwkKtEcHCq0bQ8L-d95hje0iWH61lZUbIPDK1ZX8xy-2mjqm2CB971Xh7NKIXE0UkCH2Xau92sDM9eZde2h6PFoOg-AxhoM7k9kiQw");'>
+<div class="flex flex-col gap-3 max-w-md">
+<h1 class="text-white text-3xl md:text-5xl font-extrabold leading-tight">Ofertas Especiales</h1>
+<p class="text-white/90 text-base md:text-lg font-normal">No te pierdas nuestros descuentos exclusivos por tiempo limitado.</p>
+</div>
+<button class="mt-3 flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-11 px-6 bg-primary text-white text-base font-bold transition-transform hover:scale-105">
+<span>Ver Ofertas</span>
+</button>
+</div>
+</a>
+</div>
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+<button class="h-2 w-2 rounded-full bg-white opacity-50 hover:opacity-100"></button>
+<button class="h-2 w-2 rounded-full bg-white opacity-50 hover:opacity-100"></button>
+<button class="h-2 w-2 rounded-full bg-white"></button>
+<button class="h-2 w-2 rounded-full bg-white opacity-50 hover:opacity-100"></button>
+<button class="h-2 w-2 rounded-full bg-white opacity-50 hover:opacity-100"></button>
+</div>
+<button class="absolute left-4 top-1/2 -translate-y-1/2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30">
+<span class="material-symbols-outlined text-2xl">arrow_forward_ios</span>
+</button>
+</div>
+<div class="mt-12 md:mt-16">
+<div class="flex items-center justify-between mb-5">
+<h2 class="text-primary-text-light dark:text-primary-text-dark text-2xl font-bold">Explorar</h2>
+<div class="flex items-center gap-2">
+<button class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-primary-text-light dark:text-primary-text-dark hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+</button>
+<button class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-primary-text-light dark:text-primary-text-dark hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="relative -mx-4">
+<div class="flex overflow-x-auto snap-x snap-mandatory [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="flex items-stretch p-4 gap-5 snap-start">
+<div class="flex h-full flex-1 flex-col gap-3 rounded-xl bg-card-light dark:bg-card-dark shadow-sm w-64 flex-shrink-0">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDBOM46NwaW669G0xMeYHNGEMBCtfC5l2aS19mkcdt1SR0e0g7ViOS1As8kVM2Tqw5-hd4Lp_300AeKQliapiy076ejia5i0G-frrBG9e-F53Ma5nQmKO3OBamYxWAkk_4ROXxUpypOEpGjlqDoEUVIIZns3N3FHygoa5aqy6RO5YZBU4g8KWOS2qpcBLZGX699IOOUWJ60kixzJEoAW-0lAOJrzuqsoxNhn57vk1NEZdQehrBk4bMWUabwVBMsZGbOQ4OaN9UigoEU");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-primary-text-light dark:text-primary-text-dark text-base font-semibold">Camiseta Clásica</p>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm">$29.99</p>
+</div>
+<button class="mt-3 w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 dark:bg-primary/20 text-primary text-sm font-bold hover:bg-primary/20 dark:hover:bg-primary/30">
+<span>Añadir al Carrito</span>
+</button>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-xl bg-card-light dark:bg-card-dark shadow-sm w-64 flex-shrink-0">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA5aUGDzTNrKiwdN03Bv_qoYpBFTQx5Hqd6LBxDKP24QV8iKfMx2Y4JiV9a7sd54zne1u84p7xVzHrP7epYKRBLfCYtZMOCIqvhjVkKSRvnZMZfsOf9-2q1FtUFIeoeCJaIJrJsuTQg8zP3yWSAHXcBLhMCYOOEw5yODbLsDiwp0Yb046nD3NB1M0ZSgwZEUqiF_1Wq21S0XkwEpFGFQds_J-K066y4y2_48MmkWURZQVOXGl1rjIlKnwK19MCd1PLnLDYSzZ-5DMl_");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-primary-text-light dark:text-primary-text-dark text-base font-semibold">Pantalones Denim</p>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm">$79.99</p>
+</div>
+<button class="mt-3 w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 dark:bg-primary/20 text-primary text-sm font-bold hover:bg-primary/20 dark:hover:bg-primary/30">
+<span>Añadir al Carrito</span>
+</button>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-xl bg-card-light dark:bg-card-dark shadow-sm w-64 flex-shrink-0">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBcsHYfn8Wnla3Aeyr4wctevT59DhYVCvMK4xM40Mcz4fivJGNeX_uEqsNBqOr4X1AeKdASWkobkO8grHJMHLgCwBwdaf8PHZggYm5_aKfy3L5iUkYYr8DpcJK9TxTKu8v9yEiNNW8C4UnU-w6g0Fca1QYr9_P1oW92vR7e_Ig7481K8AfAzj8ds8joU_nA_lu_4Exr5DEodLpQrgrA3dWT-XPiDIyZiWppx4xTlozHbejJhFhktsy_E_LsGaMj-4Dk7vx5bV0MZXqO");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-primary-text-light dark:text-primary-text-dark text-base font-semibold">Zapatillas Urbanas</p>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm">$120.00</p>
+</div>
+<button class="mt-3 w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 dark:bg-primary/20 text-primary text-sm font-bold hover:bg-primary/20 dark:hover:bg-primary/30">
+<span>Añadir al Carrito</span>
+</button>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-xl bg-card-light dark:bg-card-dark shadow-sm w-64 flex-shrink-0">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAouyJXlUJtmKnYyx-cqvOF5waWAsjqpGMlp92diRKhdiRsUYjo4zYemzRD4GbQRX19KlO2rA22-jtJmVMuJCJ2JNVNIgOCA0Wv7_egvyJsMVuAF_ar7cbYwdG9SYJ4yFLl4OnCw_qOaAXEBEANfxX6RkVBkG4Lg5_oqpXA8vpwkKtEcHCq0bQ8L-d95hje0iWH61lZUbIPDK1ZX8xy-2mjqm2CB971Xh7NKIXE0UkCH2Xau92sDM9eZde2h6PFoOg-AxhoM7k9kiQw");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-primary-text-light dark:text-primary-text-dark text-base font-semibold">Reloj Cronógrafo</p>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm">$250.00</p>
+</div>
+<button class="mt-3 w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 dark:bg-primary/20 text-primary text-sm font-bold hover:bg-primary/20 dark:hover:bg-primary/30">
+<span>Añadir al Carrito</span>
+</button>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-xl bg-card-light dark:bg-card-dark shadow-sm w-64 flex-shrink-0">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDBOM46NwaW669G0xMeYHNGEMBCtfC5l2aS19mkcdt1SR0e0g7ViOS1As8kVM2Tqw5-hd4Lp_300AeKQliapiy076ejia5i0G-frrBG9e-F53Ma5nQmKO3OBamYxWAkk_4ROXxUpypOEpGjlqDoEUVIIZns3N3FHygoa5aqy6RO5YZBU4g8KWOS2qpcBLZGX699IOOUWJ60kixzJEoAW-0lAOJrzuqsoxNhn57vk1NEZdQehrBk4bMWUabwVBMsZGbOQ4OaN9UigoEU");'></div>
+<div class="flex flex-col flex-1 justify-between p-3 pt-0">
+<div>
+<p class="text-primary-text-light dark:text-primary-text-dark text-base font-semibold">Otro Producto</p>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm">$49.99</p>
+</div>
+<button class="mt-3 w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-3 bg-primary/10 dark:bg-primary/20 text-primary text-sm font-bold hover:bg-primary/20 dark:hover:bg-primary/30">
+<span>Añadir al Carrito</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-12 md:mt-16">
+<h2 class="text-primary-text-light dark:text-primary-text-dark text-2xl font-bold mb-5">Comprar por Categoría</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div class="relative group overflow-hidden rounded-xl aspect-[4/3]">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpISKiHYJMdjhNYisMP_FjSq0ug3UY3RfqhyALOn5bh2BZMT_e3hwKsejv1YfKKB-56wc7sl81OD1nrrfAMk4MyfS3Y1Y3hkWFM3dDlGduy5XwPb2_2qbWWlk_Y9bqqyarbtrJBinTLg4KQZp_R07b6ikNECOt908Xbw3RYNi2pgEAAjQitY_FiPIMXDP6kZq59BeYco7PlbkahL_u6RUDz2J6z1rrELjRd0zDj-UeK7sIwLg4BeL2PhAYSODLZQm_1QsMMZGjLX9u')"></div>
+<div class="absolute inset-0 bg-black/40"></div>
+<div class="relative flex h-full flex-col items-center justify-center p-6 text-white">
+<h3 class="text-3xl font-bold">Accesorios</h3>
+<a class="mt-3 text-sm font-semibold underline underline-offset-4" href="#">Comprar Ahora</a>
+</div>
+</div>
+<div class="relative group overflow-hidden rounded-xl aspect-[4/3]">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBsoP3XFvHfyGSaGPV3WvCN5I7bPAcHW7RsOGc_U8lE31jpGy4RUloPFWuw2nKieSncXrGsAWaDmcwSfi4G3t025n3eHwCumaujDybktE884HwJlDnjkVhDHFCoV5Sr2y4IizfkiiO68n7CMB16-g5Ta_2Nk8qAWFsxDiZTA3-a96qc6qDoUPilDjhKoUJQeaJVQ-3yGSlqRvodKrMtSd0pUJvn4LMkWD0jPgahRzkIOPfzxCZ22vHkm8R-GTiRIV8DQaMl3oxWJ8VC')"></div>
+<div class="absolute inset-0 bg-black/40"></div>
+<div class="relative flex h-full flex-col items-center justify-center p-6 text-white">
+<h3 class="text-3xl font-bold">Hombres</h3>
+<a class="mt-3 text-sm font-semibold underline underline-offset-4" href="#">Comprar Ahora</a>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-12 md:mt-16">
+<div class="bg-card-light dark:bg-card-dark rounded-xl py-10 px-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+<div class="flex flex-col items-center gap-2">
+<div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">local_shipping</span>
+</div>
+<h4 class="text-base font-bold text-primary-text-light dark:text-primary-text-dark">Envío Gratis</h4>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm max-w-xs">En todos los pedidos superiores a $50. Enviamos a cualquier parte del país.</p>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">eco</span>
+</div>
+<h4 class="text-base font-bold text-primary-text-light dark:text-primary-text-dark">Materiales Sostenibles</h4>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm max-w-xs">Elaborado con materiales ecológicos para un planeta mejor.</p>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">support_agent</span>
+</div>
+<h4 class="text-base font-bold text-primary-text-light dark:text-primary-text-dark">Soporte 24/7</h4>
+<p class="text-secondary-text-light dark:text-secondary-text-dark text-sm max-w-xs">Nuestro equipo está aquí para ayudarte con cualquier pregunta o inquietud.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-card-light dark:bg-card-dark border-t border-border-light dark:border-border-dark mt-12 md:mt-16">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+<div class="col-span-2 lg:col-span-1">
+<div class="flex items-center gap-2 text-primary-text-light dark:text-primary-text-dark">
+<div class="size-6 text-primary">
+<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.59L5.41 12 4 13.41 11 20.41l10-10L19.59 9 11 17.59z"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold">SOLHANA</h2>
+</div>
+<p class="mt-3 text-sm text-secondary-text-light dark:text-secondary-text-dark">Ropa moderna para el mundo moderno.</p>
+</div>
+<div class="text-sm">
+<h4 class="font-bold text-primary-text-light dark:text-primary-text-dark mb-3">Tienda</h4>
+<ul class="space-y-2">
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Novedades</a></li>
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Hombres</a></li>
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Mujeres</a></li>
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Accesorios</a></li>
+</ul>
+</div>
+<div class="text-sm">
+<h4 class="font-bold text-primary-text-light dark:text-primary-text-dark mb-3">Atención al Cliente</h4>
+<ul class="space-y-2">
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Contáctanos</a></li>
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Preguntas Frecuentes</a></li>
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Política de Envíos</a></li>
+<li><a class="text-secondary-text-light dark:text-secondary-text-dark hover:text-primary" href="#">Devoluciones</a></li>
+</ul>
+</div>
+<div class="col-span-2 lg:col-span-2">
+<h4 class="font-bold text-primary-text-light dark:text-primary-text-dark mb-3">Únete a nuestro boletín</h4>
+<p class="text-sm text-secondary-text-light dark:text-secondary-text-dark mb-3">Recibe ofertas exclusivas y actualizaciones directamente en tu bandeja de entrada.</p>
+<form class="flex items-center gap-2">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-primary-text-light dark:text-primary-text-dark bg-background-light dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border-border-light dark:border-border-dark h-10 placeholder:text-secondary-text-light dark:placeholder:text-secondary-text-dark px-3 text-sm" placeholder="Ingresa tu correo electrónico" type="email"/>
+<button class="flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold">Suscribirse</button>
+</form>
+</div>
+</div>
+<div class="mt-10 border-t border-border-light dark:border-border-dark pt-6 flex flex-col md:flex-row items-center justify-between text-sm text-secondary-text-light dark:text-secondary-text-dark">
+<p>© 2024 SOLHANA. Todos los derechos reservados.</p>
+<div class="flex items-center gap-4 mt-4 md:mt-0">
+<a class="hover:text-primary" href="#">Términos de Servicio</a>
+<a class="hover:text-primary" href="#">Política de Privacidad</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>
