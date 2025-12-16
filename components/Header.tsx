@@ -11,7 +11,7 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [carritoCount, setCarritoCount] = useState(0);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ id: string; email?: string; user_metadata?: { nombre?: string; full_name?: string } } | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

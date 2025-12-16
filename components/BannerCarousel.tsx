@@ -20,11 +20,6 @@ interface BannerCarouselProps {
 export default function BannerCarousel({ banners }: BannerCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Si no hay banners, no renderizar nada
-  if (!banners || banners.length === 0) {
-    return null;
-  }
-
   // Filtrar duplicados por ID antes de renderizar
   const uniqueBanners = banners.filter((banner, index, self) => {
     // Si tiene ID, usar ID como criterio único
@@ -36,13 +31,19 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
   });
 
   useEffect(() => {
-    if (uniqueBanners.length <= 1) return;
+    // Si no hay banners, no configurar intervalo
+    if (!banners || banners.length === 0 || uniqueBanners.length <= 1) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % uniqueBanners.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [uniqueBanners.length]);
+  }, [banners, uniqueBanners.length]);
+
+  // Si no hay banners, no renderizar nada
+  if (!banners || banners.length === 0) {
+    return null;
+  }
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index);

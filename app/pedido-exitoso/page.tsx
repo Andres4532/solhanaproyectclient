@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { getPedidoByNumero } from '@/lib/supabase-queries';
-import type { Pedido } from '@/types/database';
+import type { Pedido, PedidoItem } from '@/types/database';
 
 export default function PedidoExitosoPage() {
   const searchParams = useSearchParams();
@@ -17,6 +17,35 @@ export default function PedidoExitosoPage() {
 
   // Número de WhatsApp (configurable)
   const WHATSAPP_NUMBER = '59169023826';
+
+  const construirMensajeWhatsApp = useCallback((pedido: Pedido & { items?: Array<PedidoItem> }): string => {
+    // Obtener nombre del cliente
+    const nombre = pedido.nombre_cliente || nombreClienteParam;
+    
+    // Obtener número de pedido
+    const numPedido = pedido.numero_pedido || '';
+    
+    // Obtener lista de productos (items puede venir en la respuesta de Supabase)
+    const items = (pedido.items || []) as Array<PedidoItem>;
+    const productos = items.length > 0 
+      ? items.map((item) => item.nombre_producto).join(', ')
+      : 'Productos';
+    
+    // Construir mensaje de envío prioritario
+    const envioPrioritario = pedido.envio_prioritario ? ', ENVÍO PRIORITARIO' : '';
+    
+    // Obtener dirección y ciudad
+    const direccion = pedido.direccion_completa || 'Dirección no especificada';
+    const ciudad = pedido.ciudad_envio || 'Ciudad no especificada';
+    
+    // Obtener método de pago
+    const metodoPago = pedido.metodo_pago || 'Pago en Casa';
+    
+    // Construir el mensaje completo
+    const mensaje = `Hola, soy ${nombre} ✅\nConfirmo que mi dirección está completa para la entrega del pedido #${numPedido}: ${productos}${envioPrioritario}.\n\n📍 Dirección: ${direccion}, ${ciudad} (${metodoPago})\n\n📍 A continuación envío mi GPS para mayor precisión.`;
+    
+    return mensaje;
+  }, [nombreClienteParam]);
 
   useEffect(() => {
     async function loadPedido() {
@@ -42,36 +71,7 @@ export default function PedidoExitosoPage() {
     }
 
     loadPedido();
-  }, [numeroPedido]);
-
-  const construirMensajeWhatsApp = (pedido: any): string => {
-    // Obtener nombre del cliente
-    const nombre = pedido.nombre_cliente || nombreClienteParam;
-    
-    // Obtener número de pedido
-    const numPedido = pedido.numero_pedido || '';
-    
-    // Obtener lista de productos (items puede venir en la respuesta de Supabase)
-    const items = (pedido.items || []) as Array<{ nombre_producto: string }>;
-    const productos = items.length > 0 
-      ? items.map((item: { nombre_producto: string }) => item.nombre_producto).join(', ')
-      : 'Productos';
-    
-    // Construir mensaje de envío prioritario
-    const envioPrioritario = pedido.envio_prioritario ? ', ENVÍO PRIORITARIO' : '';
-    
-    // Obtener dirección y ciudad
-    const direccion = pedido.direccion_completa || 'Dirección no especificada';
-    const ciudad = pedido.ciudad_envio || 'Ciudad no especificada';
-    
-    // Obtener método de pago
-    const metodoPago = pedido.metodo_pago || 'Pago en Casa';
-    
-    // Construir el mensaje completo
-    const mensaje = `Hola, soy ${nombre} ✅\nConfirmo que mi dirección está completa para la entrega del pedido #${numPedido}: ${productos}${envioPrioritario}.\n\n📍 Dirección: ${direccion}, ${ciudad} (${metodoPago})\n\n📍 A continuación envío mi GPS para mayor precisión.`;
-    
-    return mensaje;
-  };
+  }, [numeroPedido, construirMensajeWhatsApp]);
 
   const handleWhatsAppClick = () => {
     if (whatsappUrl) {

@@ -16,14 +16,13 @@ import type { ProductoCatalogo, Categoria } from '@/types/database';
 import { formatPrice } from '@/lib/utils';
 
 export default function HomeContent() {
-  const [banners, setBanners] = useState<any[]>([]);
+  const [banners, setBanners] = useState<Array<{ id: string; titulo: string; subtitulo: string; textoBoton: string; urlBoton: string; imagen: string | null; orden: number }>>([]);
   const [productos, setProductos] = useState<ProductoCatalogo[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [configNovedades, setConfigNovedades] = useState<any>(null);
-  const [configCategorias, setConfigCategorias] = useState<any>(null);
+  const [configNovedades, setConfigNovedades] = useState<{ titulo?: string; mostrar?: boolean; cantidad?: number } | null>(null);
+  const [configCategorias, setConfigCategorias] = useState<{ titulo?: string; mostrar?: boolean; cantidad?: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
 
   // Función para cargar datos
   const loadHomeData = async (showLoading = true) => {
@@ -101,13 +100,6 @@ export default function HomeContent() {
     // Limpiar intervalo al desmontar
     return () => clearInterval(intervalId);
   }, []);
-
-  // Función para refresh manual
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await loadHomeData(true); // Refresh manual con loading
-    setRefreshing(false);
-  };
 
   const scrollLeft = () => {
     const container = document.getElementById('products-scroll');

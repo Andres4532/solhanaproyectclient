@@ -22,7 +22,7 @@ export async function testSupabaseConnection(): Promise<{
     }
 
     // Probar conexión básica
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('categorias')
       .select('count')
       .limit(1);

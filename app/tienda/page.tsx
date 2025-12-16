@@ -100,7 +100,14 @@ export default function TiendaPage() {
       try {
         setLoading(true);
 
-        const filters: any = {
+        const filters: {
+          estado?: 'Activo';
+          categoria_id?: string;
+          tipo_producto?: string;
+          es_nuevo?: boolean;
+          es_best_seller?: boolean;
+          es_oferta?: boolean;
+        } = {
           estado: 'Activo',
           sortBy,
           limit: productosPorPagina,
@@ -155,7 +162,7 @@ export default function TiendaPage() {
             setTotalProductos(totalResult.data?.length || 0);
           }
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error cargando productos:', err);
         setError(err.message || 'Error al cargar los productos');
         setProductos([]);
@@ -440,7 +447,7 @@ export default function TiendaPage() {
               <select
                 value={sortBy}
                 onChange={(e) => {
-                  setSortBy(e.target.value as any);
+                  setSortBy(e.target.value as 'precio-menor' | 'precio-mayor' | 'novedades' | 'popularidad');
                   setCurrentPage(1);
                 }}
                 className="rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium focus:ring-blue-500/50 focus:border-blue-500/50 pl-4 pr-10 py-2"

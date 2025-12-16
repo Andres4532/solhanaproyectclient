@@ -10,14 +10,8 @@ import type {
   ProductoVariante,
   ProductoEspecificacion,
   Pedido,
-  PedidoItem,
   Cliente,
   Categoria,
-  DashboardKPI,
-  VentasPorDia,
-  VentasPorCategoria,
-  ProductoMasVendido,
-  ProductoBajoStock,
   QueryResult,
   Carrito,
   CarritoCompleto,
@@ -500,15 +494,20 @@ export async function getCarrito(cliente_id?: string, session_id?: string): Prom
   }
 
   // Mapear los datos para incluir descuento y precio_original del producto
-  const carritoConDescuento = (data || []).map((item: any) => ({
-    ...item,
-    producto_descuento: item.producto?.descuento || 0,
-    producto_precio_original: item.producto?.precio_original || item.producto?.precio || null,
-    producto_precio: item.producto?.precio || 0,
-  }));
+  const carritoConDescuento = (data || []).map((item) => {
+    const itemWithProduct = item as CarritoCompleto & { producto?: Array<{ descuento?: number; precio_original?: number | null; precio?: number }> };
+    const producto = Array.isArray(itemWithProduct.producto) ? itemWithProduct.producto[0] : itemWithProduct.producto;
+    
+    return {
+      ...item as CarritoCompleto,
+      producto_descuento: producto?.descuento || 0,
+      producto_precio_original: producto?.precio_original || producto?.precio || null,
+      producto_precio: producto?.precio || 0,
+    };
+  });
 
   return {
-    data: carritoConDescuento as CarritoCompleto[],
+    data: carritoConDescuento,
     error: null,
   };
 }
@@ -911,19 +910,20 @@ export async function crearPedido(data: {
 
     if (fetchError || !pedidoCompleto) {
       return {
-        data: pedido as any,
+        data: pedido as Pedido,
         error: null,
       };
     }
 
     return {
-      data: pedidoCompleto as any,
+      data: pedidoCompleto as Pedido,
       error: null,
     };
-  } catch (err: any) {
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Error inesperado al crear el pedido';
     return {
       data: null,
-      error: new Error(err.message || 'Error inesperado al crear el pedido'),
+      error: new Error(errorMessage),
     };
   }
 }
@@ -968,10 +968,11 @@ export async function limpiarCarrito(cliente_id?: string, session_id?: string): 
       data: undefined,
       error: null,
     };
-  } catch (err: any) {
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Error inesperado al limpiar el carrito';
     return {
       data: undefined,
-      error: new Error(err.message || 'Error inesperado al limpiar el carrito'),
+      error: new Error(errorMessage),
     };
   }
 }
@@ -1067,7 +1068,15 @@ export async function getDisenoPaginaBySeccion(
 }
 
 // Función para obtener todos los banners (tipo = 'banner')
-export async function getBannersFromConfig(): Promise<QueryResult<any[]>> {
+export async function getBannersFromConfig(): Promise<QueryResult<Array<{
+  id: string;
+  titulo: string;
+  subtitulo: string;
+  textoBoton: string;
+  urlBoton: string;
+  imagen: string | null;
+  orden: number;
+}>>> {
   // Obtener datos siempre frescos (sin caché)
   const { data, error } = await supabase
     .from('diseno_pagina')
@@ -1108,7 +1117,15 @@ export async function getBannersFromConfig(): Promise<QueryResult<any[]>> {
   }
 
   // Mapear los banners desde la nueva estructura
-  const bannersMap = new Map<string, any>();
+  const bannersMap = new Map<string, {
+    id: string;
+    titulo: string;
+    subtitulo: string;
+    textoBoton: string;
+    urlBoton: string;
+    imagen: string | null;
+    orden: number;
+  }>();
   
   data.forEach((item) => {
     // Usar el ID como clave única para evitar duplicados
@@ -1265,8 +1282,8 @@ export async function getCategoriasSeleccionadasHome(): Promise<QueryResult<Cate
 
     // Obtener los IDs de las categorías seleccionadas
     const categoriaIds = config.categorias
-      .map((cat: any) => cat.categoriaId)
-      .filter((id: string) => id);
+      .map((cat: { categoriaId?: string }) => cat.categoriaId)
+      .filter((id): id is string => Boolean(id));
 
     if (categoriaIds.length === 0) {
       return await getCategoriasParaHome(4);
@@ -1294,7 +1311,7 @@ export async function getCategoriasSeleccionadasHome(): Promise<QueryResult<Cate
     // Si hay imágenes en la configuración, usarlas; sino usar imagen_url de la BD
     const categoriasConImagenes = categoriasOrdenadas.map((categoria) => {
       const categoriaConfig = config.categorias.find(
-        (cat: any) => cat.categoriaId === categoria.id
+        (cat: { categoriaId?: string; imagen?: string }) => cat.categoriaId === categoria.id
       );
       
       return {
@@ -1307,7 +1324,7 @@ export async function getCategoriasSeleccionadasHome(): Promise<QueryResult<Cate
       data: categoriasConImagenes,
       error: null,
     };
-  } catch (err: any) {
+  } catch (err) {
     console.error('Error obteniendo categorías seleccionadas:', err);
     // En caso de error, retornar categorías por defecto
     return await getCategoriasParaHome(4);
@@ -1319,7 +1336,13 @@ export async function getCategoriasSeleccionadasHome(): Promise<QueryResult<Cate
 // ============================================
 
 // Función para obtener la configuración de la tienda
-export async function getConfiguracionTienda(clave: string = 'general'): Promise<QueryResult<any>> {
+export async function getConfiguracionTienda(clave: string = 'general'): Promise<QueryResult<{
+  id: string;
+  clave: string;
+  valor: Record<string, unknown>;
+  descripcion: string | null;
+  updated_at: string;
+}>> {
   const { data, error } = await supabase
     .from('tienda_configuracion')
     .select('*')
@@ -1335,8 +1358,14 @@ export async function getConfiguracionTienda(clave: string = 'general'): Promise
 // Función para actualizar la configuración de la tienda
 export async function actualizarConfiguracionTienda(
   clave: string,
-  valor: Record<string, any>
-): Promise<QueryResult<any>> {
+  valor: Record<string, unknown>
+): Promise<QueryResult<{
+  id: string;
+  clave: string;
+  valor: Record<string, unknown>;
+  descripcion: string | null;
+  updated_at: string;
+}>> {
   const { data, error } = await supabase
     .from('tienda_configuracion')
     .upsert({
