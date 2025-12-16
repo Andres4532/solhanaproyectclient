@@ -105,6 +105,7 @@ export interface Cliente {
   email: string | null;
   telefono: string | null;
   whatsapp: string | null;
+  departamento: string | null; // Departamento de Bolivia donde reside el cliente
   tipo: 'Nuevo' | 'Recurrente' | 'VIP';
   fecha_registro: string;
   total_pedidos: number;

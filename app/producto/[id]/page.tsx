@@ -12,8 +12,9 @@ import {
   getProductosRelacionados,
   agregarAlCarrito,
   getSessionId,
+  getCarrito,
 } from '@/lib/supabase-queries';
-import type { Producto, ProductoImagen, ProductoEspecificacion, ProductoVariante, ProductoCatalogo } from '@/types/database';
+import type { Producto, ProductoImagen, ProductoEspecificacion, ProductoVariante, ProductoCatalogo, CarritoCompleto } from '@/types/database';
 import { formatPrice } from '@/lib/utils';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -26,6 +27,7 @@ export default function ProductoPage() {
   const [especificaciones, setEspecificaciones] = useState<ProductoEspecificacion[]>([]);
   const [variantes, setVariantes] = useState<ProductoVariante[]>([]);
   const [productosRelacionados, setProductosRelacionados] = useState<ProductoCatalogo[]>([]);
+  const [carrito, setCarrito] = useState<CarritoCompleto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,6 +89,13 @@ export default function ProductoPage() {
         if (!relacionadosResult.error && relacionadosResult.data) {
           setProductosRelacionados(relacionadosResult.data);
         }
+
+        // Cargar carrito para verificar stock disponible
+        const sessionId = getSessionId();
+        const carritoResult = await getCarrito(undefined, sessionId);
+        if (!carritoResult.error && carritoResult.data) {
+          setCarrito(carritoResult.data);
+        }
       } catch (err) {
         console.error('Error cargando datos del producto:', err);
         setError('Error al cargar el producto. Por favor, intenta más tarde.');
@@ -98,6 +107,21 @@ export default function ProductoPage() {
     if (productoId) {
       loadProductoData();
     }
+
+    // Escuchar eventos de actualización del carrito
+    const handleCarritoUpdate = async () => {
+      const sessionId = getSessionId();
+      const carritoResult = await getCarrito(undefined, sessionId);
+      if (!carritoResult.error && carritoResult.data) {
+        setCarrito(carritoResult.data);
+      }
+    };
+
+    window.addEventListener('carrito-updated', handleCarritoUpdate);
+
+    return () => {
+      window.removeEventListener('carrito-updated', handleCarritoUpdate);
+    };
   }, [productoId]);
 
   // Extraer colores y tallas únicos de las variantes (soporta diferentes formatos de atributos)
@@ -136,23 +160,60 @@ export default function ProductoPage() {
     });
   }, [variantes, colorSeleccionado, tallaSeleccionada]);
 
-  // Stock disponible (usar stock de variante si existe, sino calcular stock total)
-  const stockDisponible = useMemo(() => {
-    if (varianteSeleccionada) {
-      return varianteSeleccionada.stock;
-    }
+  // Calcular cantidad en carrito para este producto y variante
+  const cantidadEnCarrito = useMemo(() => {
+    if (!producto) return 0;
     
-    // Si el producto tiene variantes pero no hay variante seleccionada,
-    // calcular el stock total sumando todas las variantes activas
-    if (producto?.tiene_variantes && variantes.length > 0) {
-      return variantes
+    return carrito
+      .filter((item) => {
+        // Filtrar por producto_id
+        if (item.producto_id !== producto.id) return false;
+        
+        // Si hay variante seleccionada, filtrar también por variante_id
+        if (varianteSeleccionada) {
+          return item.variante_id === varianteSeleccionada.id;
+        }
+        
+        // Si no hay variante seleccionada pero el producto tiene variantes,
+        // contar solo items sin variante o con variante que coincida con color/talla seleccionados
+        if (producto.tiene_variantes) {
+          // Si hay color o talla seleccionado, filtrar por esos atributos
+          if (colorSeleccionado || tallaSeleccionada) {
+            const varianteInfo = item.variante_atributos || {};
+            const itemColor = item.color || varianteInfo.color || varianteInfo.Color;
+            const itemTalla = item.talla || varianteInfo.talla || varianteInfo.Talla;
+            
+            if (colorSeleccionado && itemColor !== colorSeleccionado) return false;
+            if (tallaSeleccionada && itemTalla !== tallaSeleccionada) return false;
+          }
+        }
+        
+        return true;
+      })
+      .reduce((sum, item) => sum + item.cantidad, 0);
+  }, [carrito, producto, varianteSeleccionada, colorSeleccionado, tallaSeleccionada]);
+
+  // Stock disponible (usar stock de variante si existe, sino calcular stock total)
+  // Restar lo que ya está en el carrito
+  const stockDisponible = useMemo(() => {
+    let stockBase = 0;
+    
+    if (varianteSeleccionada) {
+      stockBase = varianteSeleccionada.stock;
+    } else if (producto?.tiene_variantes && variantes.length > 0) {
+      // Si el producto tiene variantes pero no hay variante seleccionada,
+      // calcular el stock total sumando todas las variantes activas
+      stockBase = variantes
         .filter((v) => v.activo)
         .reduce((sum, v) => sum + v.stock, 0);
+    } else {
+      // Si no tiene variantes, usar el stock del producto
+      stockBase = producto?.stock || 0;
     }
     
-    // Si no tiene variantes, usar el stock del producto
-    return producto?.stock || 0;
-  }, [varianteSeleccionada, producto, variantes]);
+    // Restar lo que ya está en el carrito
+    return Math.max(0, stockBase - cantidadEnCarrito);
+  }, [varianteSeleccionada, producto, variantes, cantidadEnCarrito]);
 
   const incrementarCantidad = () => {
     setCantidad((prev) => Math.min(prev + 1, stockDisponible));
@@ -215,6 +276,14 @@ export default function ProductoPage() {
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new Event('carrito-updated'));
         }
+        
+        // Recargar el carrito para actualizar el stock disponible
+        const sessionId = getSessionId();
+        const carritoResult = await getCarrito(undefined, sessionId);
+        if (!carritoResult.error && carritoResult.data) {
+          setCarrito(carritoResult.data);
+        }
+        
         // Limpiar mensaje después de 3 segundos
         setTimeout(() => setMensajeExito(null), 3000);
         // Resetear cantidad a 1
@@ -402,9 +471,6 @@ export default function ProductoPage() {
           <h1 className="text-gray-900 dark:text-white tracking-tight text-3xl md:text-4xl font-bold leading-tight">
             {producto.nombre}
           </h1>
-          {producto.descripcion_corta && (
-            <p className="text-gray-500 dark:text-gray-400 mt-2">{producto.descripcion_corta}</p>
-          )}
 
           {/* Calificación */}
           {producto.total_resenas > 0 && (
@@ -688,13 +754,25 @@ export default function ProductoPage() {
                   </>
                 )}
               </button>
-              {mensajeExito && (
-                <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2 mt-2">
+            </div>
+            
+            {/* Botón Ver Carrito - Siempre visible */}
+            <Link
+              href="/carrito"
+              className="mt-3 flex items-center justify-center gap-2 w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              <span className="material-symbols-outlined">shopping_cart</span>
+              Ver carrito
+            </Link>
+
+            {mensajeExito && (
+              <div className="mt-4">
+                <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
                   <span className="material-symbols-outlined !text-lg">check_circle</span>
                   {mensajeExito}
                 </p>
-              )}
-            </div>
+              </div>
+            )}
 
             <p className={`text-sm flex items-center gap-2 ${
               stockDisponible > 0
@@ -715,19 +793,15 @@ export default function ProductoPage() {
             )}
           </div>
 
-          {/* Acordeón de Información */}
+          {/* Información del Producto */}
           <div className="mt-10 border-t border-gray-200 dark:border-gray-700">
-            <details className="group py-4 border-b border-gray-200 dark:border-gray-700" open>
-              <summary className="flex justify-between items-center cursor-pointer list-none">
-                <span className="font-semibold text-gray-800 dark:text-gray-200">Descripción</span>
-                <span className="transition-transform duration-300 group-open:rotate-180">
-                  <span className="material-symbols-outlined">expand_more</span>
-                </span>
-              </summary>
-              <p className="mt-4 text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+            {/* Descripción - Siempre visible */}
+            <div className="py-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">Descripción</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                 {producto.descripcion || producto.descripcion_corta || 'Sin descripción disponible.'}
               </p>
-            </details>
+            </div>
             {especificaciones.length > 0 && (
               <details className="group py-4 border-b border-gray-200 dark:border-gray-700">
                 <summary className="flex justify-between items-center cursor-pointer list-none">
@@ -747,21 +821,17 @@ export default function ProductoPage() {
                 </ul>
               </details>
             )}
-            <details className="group py-4 border-b border-gray-200 dark:border-gray-700">
-              <summary className="flex justify-between items-center cursor-pointer list-none">
-                <span className="font-semibold text-gray-800 dark:text-gray-200">
-                  Envíos y Devoluciones
-                </span>
-                <span className="transition-transform duration-300 group-open:rotate-180">
-                  <span className="material-symbols-outlined">expand_more</span>
-                </span>
-              </summary>
-              <p className="mt-4 text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+            {/* Envíos y Devoluciones - Siempre visible */}
+            <div className="py-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                Envíos y Devoluciones
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
                 Envío estándar gratuito en pedidos superiores a $50. Aceptamos devoluciones dentro
                 de los 30 días posteriores a la entrega para un reembolso completo. Los artículos
                 deben estar en su estado original.
               </p>
-            </details>
+            </div>
           </div>
         </div>
       </div>

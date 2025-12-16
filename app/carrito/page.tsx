@@ -384,6 +384,7 @@ export default function CarritoPage() {
         direccion_completa: formData.direccion || undefined,
         ciudad_envio: nombreCiudad || undefined,
         referencias_envio: undefined,
+        departamento: nombreCiudad || undefined,
         items: itemsPedido,
       });
 
@@ -394,9 +395,22 @@ export default function CarritoPage() {
         return;
       }
 
-      // Limpiar el carrito después de crear el pedido
-      const sessionId = getSessionId();
-      await limpiarCarrito(clienteId || undefined, clienteId ? undefined : sessionId);
+      // Limpiar el carrito después de crear el pedido exitosamente
+      try {
+        const sessionId = getSessionId();
+        const limpiarResult = await limpiarCarrito(clienteId || undefined, clienteId ? undefined : sessionId);
+        
+        if (limpiarResult.error) {
+          console.error('Error limpiando carrito:', limpiarResult.error);
+          // Continuar de todas formas, el pedido ya se creó
+        }
+        
+        // Limpiar también el estado local del carrito
+        setCarrito([]);
+      } catch (err) {
+        console.error('Error al limpiar carrito:', err);
+        // Continuar de todas formas, el pedido ya se creó
+      }
 
       // Disparar evento para actualizar el contador del header
       if (typeof window !== 'undefined') {

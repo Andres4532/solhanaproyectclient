@@ -693,6 +693,7 @@ export async function crearPedido(data: {
   direccion_completa?: string;
   ciudad_envio?: string;
   referencias_envio?: string;
+  departamento?: string;
   items: Array<{
     producto_id: string;
     variante_id?: string | null;
@@ -704,11 +705,116 @@ export async function crearPedido(data: {
   }>;
 }): Promise<QueryResult<Pedido>> {
   try {
+    let clienteIdFinal = data.cliente_id || null;
+
+    // Si no hay cliente_id (pedido sin autenticación), crear o actualizar cliente en la tabla clientes
+    if (!clienteIdFinal && (data.email_cliente || data.telefono_cliente)) {
+      try {
+        // Buscar cliente existente por email o teléfono
+        let clienteExistente: { id: string; email?: string | null; whatsapp?: string | null } | null = null;
+
+        if (data.email_cliente) {
+          const { data: clientePorEmail, error: errorEmail } = await supabase
+            .from('clientes')
+            .select('id, email, whatsapp')
+            .eq('email', data.email_cliente)
+            .maybeSingle();
+          
+          if (!errorEmail && clientePorEmail) {
+            clienteExistente = clientePorEmail;
+          }
+        }
+
+        // Si no se encontró por email, buscar por teléfono
+        if (!clienteExistente && data.telefono_cliente) {
+          const { data: clientePorTelefono, error: errorTelefono } = await supabase
+            .from('clientes')
+            .select('id, email, whatsapp')
+            .eq('telefono', data.telefono_cliente)
+            .maybeSingle();
+          
+          if (!errorTelefono && clientePorTelefono) {
+            clienteExistente = clientePorTelefono;
+          }
+        }
+
+        if (clienteExistente) {
+          // Actualizar cliente existente
+          clienteIdFinal = clienteExistente.id;
+          
+          const updateData: any = {
+            updated_at: new Date().toISOString(),
+          };
+
+          if (data.nombre_cliente) {
+            const partesNombre = data.nombre_cliente.trim().split(' ');
+            updateData.nombre = partesNombre[0] || data.nombre_cliente;
+            if (partesNombre.length > 1) {
+              updateData.apellido = partesNombre.slice(1).join(' ');
+            }
+          }
+
+          if (data.apellido_cliente) {
+            updateData.apellido = data.apellido_cliente;
+          }
+
+          if (data.email_cliente && !clienteExistente.email) {
+            updateData.email = data.email_cliente;
+          }
+
+          if (data.telefono_cliente) {
+            updateData.telefono = data.telefono_cliente;
+            // Si no hay whatsapp, usar el teléfono
+            if (!clienteExistente.whatsapp) {
+              updateData.whatsapp = data.telefono_cliente;
+            }
+          }
+
+          if (data.departamento) {
+            updateData.departamento = data.departamento;
+          }
+
+          await supabase
+            .from('clientes')
+            .update(updateData)
+            .eq('id', clienteIdFinal);
+        } else {
+          // Crear nuevo cliente
+          const partesNombre = (data.nombre_cliente || '').trim().split(' ');
+          const nombre = partesNombre[0] || 'Cliente';
+          const apellido = partesNombre.length > 1 ? partesNombre.slice(1).join(' ') : (data.apellido_cliente || null);
+
+          const { data: nuevoCliente, error: clienteError } = await supabase
+            .from('clientes')
+            .insert({
+              nombre: nombre,
+              apellido: apellido,
+              email: data.email_cliente || null,
+              telefono: data.telefono_cliente || null,
+              whatsapp: data.telefono_cliente || null,
+              departamento: data.departamento || null,
+              tipo: 'Nuevo',
+              user_id: null, // Sin autenticación
+            })
+            .select('id')
+            .single();
+
+          if (!clienteError && nuevoCliente) {
+            clienteIdFinal = nuevoCliente.id;
+          }
+        }
+      } catch (err) {
+        // Si hay error al crear/actualizar cliente, continuar sin cliente_id
+        // El pedido se creará con los datos en nombre_cliente, etc.
+        console.error('Error creando/actualizando cliente:', err);
+      }
+    }
+
     // Crear el pedido
     const { data: pedido, error: pedidoError } = await supabase
       .from('pedidos')
       .insert({
-        cliente_id: data.cliente_id || null,
+        cliente_id: clienteIdFinal,
         nombre_cliente: data.nombre_cliente || null,
         apellido_cliente: data.apellido_cliente || null,
         telefono_cliente: data.telefono_cliente || null,
@@ -761,6 +867,41 @@ export async function crearPedido(data: {
       };
     }
 
+    // Restar el stock de los productos y variantes
+    for (const item of data.items) {
+      if (item.variante_id) {
+        // Si tiene variante, restar stock de la variante
+        const { data: variante, error: varianteError } = await supabase
+          .from('producto_variantes')
+          .select('stock')
+          .eq('id', item.variante_id)
+          .single();
+
+        if (!varianteError && variante) {
+          const nuevoStock = Math.max(0, variante.stock - item.cantidad);
+          await supabase
+            .from('producto_variantes')
+            .update({ stock: nuevoStock })
+            .eq('id', item.variante_id);
+        }
+      } else {
+        // Si no tiene variante, restar stock del producto
+        const { data: producto, error: productoError } = await supabase
+          .from('productos')
+          .select('stock')
+          .eq('id', item.producto_id)
+          .single();
+
+        if (!productoError && producto) {
+          const nuevoStock = Math.max(0, producto.stock - item.cantidad);
+          await supabase
+            .from('productos')
+            .update({ stock: nuevoStock })
+            .eq('id', item.producto_id);
+        }
+      }
+    }
+
     // Obtener el pedido completo con el número generado
     const { data: pedidoCompleto, error: fetchError } = await supabase
       .from('pedidos')
@@ -789,25 +930,50 @@ export async function crearPedido(data: {
 
 // Función para limpiar el carrito después de crear un pedido
 export async function limpiarCarrito(cliente_id?: string, session_id?: string): Promise<QueryResult<void>> {
-  let query = supabase.from('carrito').delete();
+  try {
+    if (cliente_id) {
+      // Limpiar carrito por cliente_id
+      const { error } = await supabase
+        .from('carrito')
+        .delete()
+        .eq('cliente_id', cliente_id);
 
-  if (cliente_id) {
-    query = query.eq('cliente_id', cliente_id);
-  } else if (session_id) {
-    query = query.eq('session_id', session_id);
-  } else {
+      if (error) {
+        return {
+          data: undefined,
+          error: new Error(error.message),
+        };
+      }
+    } else if (session_id) {
+      // Limpiar carrito por session_id
+      const { error } = await supabase
+        .from('carrito')
+        .delete()
+        .eq('session_id', session_id);
+
+      if (error) {
+        return {
+          data: undefined,
+          error: new Error(error.message),
+        };
+      }
+    } else {
+      return {
+        data: undefined,
+        error: new Error('Se requiere cliente_id o session_id para limpiar el carrito'),
+      };
+    }
+
     return {
       data: undefined,
-      error: new Error('Se requiere cliente_id o session_id para limpiar el carrito'),
+      error: null,
+    };
+  } catch (err: any) {
+    return {
+      data: undefined,
+      error: new Error(err.message || 'Error inesperado al limpiar el carrito'),
     };
   }
-
-  const { error } = await query;
-
-  return {
-    data: error ? undefined : undefined,
-    error: error ? new Error(error.message) : null,
-  };
 }
 
 // ============================================
@@ -1146,6 +1312,45 @@ export async function getCategoriasSeleccionadasHome(): Promise<QueryResult<Cate
     // En caso de error, retornar categorías por defecto
     return await getCategoriasParaHome(4);
   }
+}
+
+// ============================================
+// FUNCIONES DE CONFIGURACIÓN DE TIENDA
+// ============================================
+
+// Función para obtener la configuración de la tienda
+export async function getConfiguracionTienda(clave: string = 'general'): Promise<QueryResult<any>> {
+  const { data, error } = await supabase
+    .from('tienda_configuracion')
+    .select('*')
+    .eq('clave', clave)
+    .single();
+
+  return {
+    data: error ? null : data,
+    error: error ? new Error(error.message) : null,
+  };
+}
+
+// Función para actualizar la configuración de la tienda
+export async function actualizarConfiguracionTienda(
+  clave: string,
+  valor: Record<string, any>
+): Promise<QueryResult<any>> {
+  const { data, error } = await supabase
+    .from('tienda_configuracion')
+    .upsert({
+      clave,
+      valor,
+      updated_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  return {
+    data: error ? null : data,
+    error: error ? new Error(error.message) : null,
+  };
 }
 
 // ============================================

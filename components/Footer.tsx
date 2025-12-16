@@ -1,120 +1,61 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { getConfiguracionTienda } from '@/lib/supabase-queries';
 
 export default function Footer() {
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [nombreTienda, setNombreTienda] = useState<string>('SOLHANA');
+
+  // Cargar logo y nombre de la tienda desde la configuración
+  useEffect(() => {
+    async function loadConfig() {
+      try {
+        const configResult = await getConfiguracionTienda('general');
+        if (configResult.data && configResult.data.valor) {
+          if (configResult.data.valor.logo_url) {
+            setLogoUrl(configResult.data.valor.logo_url);
+          }
+          if (configResult.data.valor.nombre_tienda) {
+            setNombreTienda(configResult.data.valor.nombre_tienda);
+          }
+        }
+      } catch (err) {
+        console.error('Error cargando configuración:', err);
+      }
+    }
+    loadConfig();
+  }, []);
+
   return (
     <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-          <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 text-gray-900 dark:text-white">
-              <div className="h-6 w-6 rounded-full bg-blue-500"></div>
-              <h2 className="text-xl font-bold tracking-tight">SOLHANA</h2>
-            </Link>
-            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs">
-              La mejor selección de zapatillas para tu estilo de vida.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-gray-900 dark:text-white">
-              Tienda
-            </h3>
-            <ul className="mt-4 space-y-3">
-              <li>
-                <Link href="/tienda/novedades" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Novedades
-                </Link>
-              </li>
-              <li>
-                <Link href="/tienda/hombres" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Hombre
-                </Link>
-              </li>
-              <li>
-                <Link href="/tienda/mujeres" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Mujer
-                </Link>
-              </li>
-              <li>
-                <Link href="/tienda/accesorios" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Ofertas
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-gray-900 dark:text-white">
-              Información
-            </h3>
-            <ul className="mt-4 space-y-3">
-              <li>
-                <Link href="/sobre-nosotros" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Sobre Nosotros
-                </Link>
-              </li>
-              <li>
-                <Link href="/politica-envios" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Envíos y Devoluciones
-                </Link>
-              </li>
-              <li>
-                <Link href="/preguntas-frecuentes" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Preguntas Frecuentes
-                </Link>
-              </li>
-              <li>
-                <Link href="/contacto" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Contacto
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-gray-900 dark:text-white">
-              Legal
-            </h3>
-            <ul className="mt-4 space-y-3">
-              <li>
-                <Link href="/terminos-servicio" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Términos y Condiciones
-                </Link>
-              </li>
-              <li>
-                <Link href="/politica-privacidad" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Política de Privacidad
-                </Link>
-              </li>
-              <li>
-                <Link href="/politica-privacidad" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  Política de Cookies
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="col-span-2 md:col-span-1">
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-gray-900 dark:text-white">
-              Suscríbete
-            </h3>
-            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-              Recibe ofertas exclusivas y novedades en tu email.
-            </p>
-            <form className="mt-4 flex">
-              <input
-                className="form-input flex-1 min-w-0 rounded-l-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="tu@email.com"
-                type="email"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-gray-900 dark:bg-gray-800 text-white rounded-r-md text-sm font-semibold hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
-              >
-                Enviar
-              </button>
-            </form>
-          </div>
+        <div className="flex flex-col items-center">
+          <Link href="/" className="flex items-center gap-2 text-gray-900 dark:text-white">
+            {logoUrl ? (
+              <div className="relative h-6 w-6 flex-shrink-0">
+                <Image
+                  src={logoUrl}
+                  alt="Logo"
+                  fill
+                  className="object-contain"
+                  sizes="24px"
+                />
+              </div>
+            ) : (
+              <div className="h-6 w-6 rounded-full bg-blue-500 flex-shrink-0"></div>
+            )}
+            <h2 className="text-xl font-bold tracking-tight">{nombreTienda}</h2>
+          </Link>
+          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs text-center">
+            La mejor selección de zapatillas para tu estilo de vida.
+          </p>
         </div>
         <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            © {new Date().getFullYear()} SOLHANA. Todos los derechos reservados.
+            © {new Date().getFullYear()} {nombreTienda}. Todos los derechos reservados.
           </p>
           <div className="flex gap-4 mt-4 sm:mt-0">
             <a href="#" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">

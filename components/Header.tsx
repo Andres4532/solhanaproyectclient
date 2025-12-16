@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { getCarrito, getSessionId, clearSessionId } from '@/lib/supabase-queries';
+import { getCarrito, getSessionId, clearSessionId, getConfiguracionTienda } from '@/lib/supabase-queries';
 import { getUser, signOut } from '@/lib/auth-helpers';
 
 export default function Header() {
@@ -14,10 +15,14 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [nombreTienda, setNombreTienda] = useState<string>('SOLHANA');
+  const [mensajeCarrito, setMensajeCarrito] = useState<string | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const carritoCountAnteriorRef = useRef<number>(0);
 
-  // Cargar usuario autenticado
+  // Cargar usuario autenticado y logo
   useEffect(() => {
     async function loadUser() {
       const { user: currentUser } = await getUser();
@@ -34,6 +39,26 @@ export default function Header() {
     return () => {
       window.removeEventListener('auth-state-changed', handleAuthChange);
     };
+  }, []);
+
+  // Cargar logo y nombre de la tienda desde la configuración
+  useEffect(() => {
+    async function loadConfig() {
+      try {
+        const configResult = await getConfiguracionTienda('general');
+        if (configResult.data && configResult.data.valor) {
+          if (configResult.data.valor.logo_url) {
+            setLogoUrl(configResult.data.valor.logo_url);
+          }
+          if (configResult.data.valor.nombre_tienda) {
+            setNombreTienda(configResult.data.valor.nombre_tienda);
+          }
+        }
+      } catch (err) {
+        console.error('Error cargando configuración:', err);
+      }
+    }
+    loadConfig();
   }, []);
 
   // Cerrar menú al hacer clic fuera
@@ -61,9 +86,25 @@ export default function Header() {
         if (!result.error && result.data) {
           // Sumar todas las cantidades de los items del carrito
           const totalItems = result.data.reduce((sum, item) => sum + item.cantidad, 0);
+          const previousCount = carritoCountAnteriorRef.current;
+          
+          // Mostrar mensaje si se agregó un producto (el contador aumentó)
+          if (totalItems > previousCount) {
+            const itemsAgregados = totalItems - previousCount;
+            if (itemsAgregados === 1) {
+              setMensajeCarrito('Producto agregado');
+            } else {
+              setMensajeCarrito(`${itemsAgregados} productos agregados`);
+            }
+            // Ocultar mensaje después de 3 segundos
+            setTimeout(() => setMensajeCarrito(null), 3000);
+          }
+          
           setCarritoCount(totalItems);
+          carritoCountAnteriorRef.current = totalItems;
         } else {
           setCarritoCount(0);
+          carritoCountAnteriorRef.current = 0;
         }
       } catch (err) {
         console.error('Error cargando contador del carrito:', err);
@@ -145,12 +186,20 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2 text-gray-900 dark:text-white">
-              <div className="size-7 text-blue-500">
-                <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.59L5.41 12 4 13.41 11 20.41l10-10L19.59 9 11 17.59z"></path>
-                </svg>
-              </div>
-              <h2 className="text-xl font-bold">SOLHANA</h2>
+              {logoUrl ? (
+                <div className="relative h-7 w-7 flex-shrink-0">
+                  <Image
+                    src={logoUrl}
+                    alt="Logo"
+                    fill
+                    className="object-contain"
+                    sizes="28px"
+                  />
+                </div>
+              ) : (
+                <div className="h-6 w-6 rounded-full bg-blue-500 flex-shrink-0"></div>
+              )}
+              <h2 className="text-xl font-bold">{nombreTienda}</h2>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               <Link
@@ -286,17 +335,28 @@ export default function Header() {
                 </div>
               )}
             </div>
-            <Link
-              href="/carrito"
-              className="relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
-            >
-              <span className="material-symbols-outlined text-xl">shopping_bag</span>
-              {carritoCount > 0 && (
-                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                  {carritoCount > 99 ? '99+' : carritoCount}
-                </span>
+            <div className="relative">
+              <Link
+                href="/carrito"
+                className="relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
+              >
+                <span className="material-symbols-outlined text-xl">shopping_cart</span>
+                {carritoCount > 0 && (
+                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                    {carritoCount > 99 ? '99+' : carritoCount}
+                  </span>
+                )}
+              </Link>
+              {mensajeCarrito && (
+                <div className="absolute right-0 top-full mt-2 px-3 py-2 bg-green-600 text-white text-xs font-semibold rounded-lg shadow-lg whitespace-nowrap z-50 animate-fade-in pointer-events-none">
+                  <div className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                    {mensajeCarrito}
+                  </div>
+                  <div className="absolute -top-1 right-4 w-2 h-2 bg-green-600 transform rotate-45"></div>
+                </div>
               )}
-            </Link>
+            </div>
           </div>
         </div>
       </div>

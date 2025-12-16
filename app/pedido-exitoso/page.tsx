@@ -48,6 +48,9 @@ export default function PedidoExitosoPage() {
     // Obtener nombre del cliente
     const nombre = pedido.nombre_cliente || nombreClienteParam;
     
+    // Obtener número de pedido
+    const numPedido = pedido.numero_pedido || '';
+    
     // Obtener lista de productos (items puede venir en la respuesta de Supabase)
     const items = (pedido.items || []) as Array<{ nombre_producto: string }>;
     const productos = items.length > 0 
@@ -65,7 +68,7 @@ export default function PedidoExitosoPage() {
     const metodoPago = pedido.metodo_pago || 'Pago en Casa';
     
     // Construir el mensaje completo
-    const mensaje = `Hola, soy ${nombre} ✅\nConfirmo que mi dirección está completa para la entrega del pedido: ${productos}${envioPrioritario}.\n\n📍 Dirección: ${direccion}, ${ciudad} (${metodoPago})\n\n📍 A continuación envío mi GPS para mayor precisión.`;
+    const mensaje = `Hola, soy ${nombre} ✅\nConfirmo que mi dirección está completa para la entrega del pedido #${numPedido}: ${productos}${envioPrioritario}.\n\n📍 Dirección: ${direccion}, ${ciudad} (${metodoPago})\n\n📍 A continuación envío mi GPS para mayor precisión.`;
     
     return mensaje;
   };
