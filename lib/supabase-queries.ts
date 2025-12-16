@@ -741,7 +741,15 @@ export async function crearPedido(data: {
           // Actualizar cliente existente
           clienteIdFinal = clienteExistente.id;
           
-          const updateData: any = {
+          const updateData: {
+            updated_at: string;
+            nombre?: string;
+            apellido?: string;
+            email?: string;
+            telefono?: string;
+            whatsapp?: string;
+            departamento?: string;
+          } = {
             updated_at: new Date().toISOString(),
           };
 
