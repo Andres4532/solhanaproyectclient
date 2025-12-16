@@ -47,11 +47,12 @@ export default function Header() {
       try {
         const configResult = await getConfiguracionTienda('general');
         if (configResult.data && configResult.data.valor) {
-          if (configResult.data.valor.logo_url) {
-            setLogoUrl(configResult.data.valor.logo_url);
+          const valor = configResult.data.valor;
+          if (valor.logo_url && typeof valor.logo_url === 'string') {
+            setLogoUrl(valor.logo_url);
           }
-          if (configResult.data.valor.nombre_tienda) {
-            setNombreTienda(configResult.data.valor.nombre_tienda);
+          if (valor.nombre_tienda && typeof valor.nombre_tienda === 'string') {
+            setNombreTienda(valor.nombre_tienda);
           }
         }
       } catch (err) {
