@@ -103,10 +103,16 @@ export default function TiendaPage() {
         const filters: {
           estado?: 'Activo';
           categoria_id?: string;
-          tipo_producto?: string;
+          tipo_producto?: string[];
           es_nuevo?: boolean;
           es_best_seller?: boolean;
           es_oferta?: boolean;
+          sortBy?: 'precio-menor' | 'precio-mayor' | 'novedades' | 'popularidad';
+          limit?: number;
+          offset?: number;
+          busqueda?: string;
+          precio_min?: number;
+          precio_max?: number;
         } = {
           estado: 'Activo',
           sortBy,
