@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { getPedidoByNumero } from '@/lib/supabase-queries';
 import type { Pedido } from '@/types/database';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
-export default function PedidoExitosoPage() {
+function PedidoExitosoContent() {
   const searchParams = useSearchParams();
   const numeroPedido = searchParams.get('pedido');
   const nombreClienteParam = searchParams.get('nombre') || 'Cliente';
@@ -165,5 +166,17 @@ export default function PedidoExitosoPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PedidoExitosoPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    }>
+      <PedidoExitosoContent />
+    </Suspense>
   );
 }
