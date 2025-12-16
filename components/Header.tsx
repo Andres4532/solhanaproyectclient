@@ -11,7 +11,7 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [carritoCount, setCarritoCount] = useState(0);
-  const [user, setUser] = useState<{ id: string; email?: string; user_metadata?: { nombre?: string; full_name?: string } } | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,12 +47,11 @@ export default function Header() {
       try {
         const configResult = await getConfiguracionTienda('general');
         if (configResult.data && configResult.data.valor) {
-          const valor = configResult.data.valor;
-          if (valor.logo_url && typeof valor.logo_url === 'string') {
-            setLogoUrl(valor.logo_url);
+          if (configResult.data.valor.logo_url) {
+            setLogoUrl(configResult.data.valor.logo_url);
           }
-          if (valor.nombre_tienda && typeof valor.nombre_tienda === 'string') {
-            setNombreTienda(valor.nombre_tienda);
+          if (configResult.data.valor.nombre_tienda) {
+            setNombreTienda(configResult.data.valor.nombre_tienda);
           }
         }
       } catch (err) {

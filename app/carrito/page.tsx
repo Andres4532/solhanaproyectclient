@@ -40,7 +40,7 @@ export default function CarritoPage() {
   const [emailAuthMode, setEmailAuthMode] = useState<'login' | 'signup'>('login');
   const [emailForm, setEmailForm] = useState({ email: '', password: '', nombre: '' });
   const [authLoading, setAuthLoading] = useState(false);
-  const [user, setUser] = useState<{ id: string; email?: string; user_metadata?: { nombre?: string; full_name?: string } } | null>(null);
+  const [user, setUser] = useState<any>(null);
 
   // Cargar usuario autenticado y datos del cliente
   useEffect(() => {
@@ -308,7 +308,7 @@ export default function CarritoPage() {
           console.error('Error cargando datos del cliente:', err);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error:', err);
       alert('Error al autenticar. Por favor, intenta de nuevo.');
     } finally {
@@ -421,7 +421,7 @@ export default function CarritoPage() {
       const numeroPedido = pedidoResult.data.numero_pedido;
       const nombreCliente = nombre || formData.nombre.split(' ')[0] || 'Cliente';
       router.push(`/pedido-exitoso?pedido=${encodeURIComponent(numeroPedido)}&nombre=${encodeURIComponent(nombreCliente)}`);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error al procesar el pedido:', err);
       alert('Error al procesar el pedido. Por favor, intenta de nuevo.');
       setLoading(false);

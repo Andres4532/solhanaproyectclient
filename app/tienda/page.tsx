@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -13,7 +13,9 @@ import type { ProductoCatalogo, Categoria } from '@/types/database';
 import { formatPrice } from '@/lib/utils';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-export default function TiendaPage() {
+export const dynamic = 'force-dynamic';
+
+function TiendaContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoriaParam = searchParams.get('categoria');
@@ -602,5 +604,17 @@ export default function TiendaPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+export default function TiendaPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" />
+      </div>
+    }>
+      <TiendaContent />
+    </Suspense>
   );
 }

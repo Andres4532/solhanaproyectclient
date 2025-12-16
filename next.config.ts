@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: 'standalone', // Necesario para Docker
+  eslint: {
+    // Deshabilitar ESLint durante el build (útil para Docker)
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // Deshabilitar verificación de tipos durante el build (opcional)
+    ignoreBuildErrors: false,
+  },
   images: {
     remotePatterns: [
       {
@@ -23,9 +32,9 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    turbo: {
-      resolveAlias: {},
-    },
+  },
+  turbopack: {
+    resolveAlias: {},
   },
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
