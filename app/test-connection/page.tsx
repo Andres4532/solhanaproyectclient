@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { testSupabaseConnection } from '@/lib/test-connection';
 
 export default function TestConnectionPage() {
@@ -120,7 +121,7 @@ export default function TestConnectionPage() {
             className="block text-center text-blue-600 hover:text-blue-800 underline"
           >
             Volver al inicio
-          </a>
+          </Link>
         </div>
       </div>
     </div>
