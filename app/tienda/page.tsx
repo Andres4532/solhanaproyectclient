@@ -170,7 +170,7 @@ export default function TiendaPage() {
         }
       } catch (err) {
         console.error('Error cargando productos:', err);
-        setError(err.message || 'Error al cargar los productos');
+        setError(err instanceof Error ? err.message : 'Error al cargar los productos');
         setProductos([]);
         setTotalProductos(0);
       } finally {
