@@ -182,11 +182,11 @@ export default function HomeContent() {
               {productos.map((producto) => (
                 <div
                   key={producto.id}
-                  className="flex h-full flex-1 flex-col gap-3 rounded-xl bg-white dark:bg-gray-800 shadow-sm w-64 flex-shrink-0 snap-start"
+                  className="flex h-96 flex-col gap-3 rounded-xl bg-white dark:bg-gray-800 shadow-sm w-64 flex-shrink-0 snap-start"
                 >
                   {producto.imagen_principal ? (
                     <Link href={`/producto/${producto.id}`}>
-                      <div className="relative w-full aspect-square rounded-lg overflow-hidden">
+                      <div className="relative w-full h-56 rounded-lg overflow-hidden">
                         <Image
                           src={producto.imagen_principal}
                           alt={producto.nombre}
@@ -196,9 +196,9 @@ export default function HomeContent() {
                       </div>
                     </Link>
                   ) : (
-                    <div className="w-full aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg" />
+                    <div className="w-full h-40 bg-gray-200 dark:bg-gray-700 rounded-lg" />
                   )}
-                  <div className="flex flex-col flex-1 justify-between p-3 pt-0">
+                  <div className="flex flex-col flex-1 justify-between p-3 pt-0 overflow-hidden">
                     <div>
                       <p className="text-gray-900 dark:text-white text-base font-semibold line-clamp-2">
                         {producto.nombre}
