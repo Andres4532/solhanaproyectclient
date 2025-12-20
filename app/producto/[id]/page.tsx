@@ -472,6 +472,13 @@ export default function ProductoPage() {
             {producto.nombre}
           </h1>
 
+          {/* Descripción Corta */}
+          {producto.descripcion_corta && (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              {producto.descripcion_corta}
+            </p>
+          )}
+
           {/* Calificación */}
           {producto.total_resenas > 0 && (
             <div className="mt-4 flex items-center">
@@ -872,7 +879,7 @@ export default function ProductoPage() {
                   </div>
                 </Link>
                 <div className="mt-4">
-                  <h3 className="text-gray-800 dark:text-gray-200 font-semibold text-base leading-snug">
+                  <h3 className="text-gray-800 dark:text-gray-200 font-semibold text-base leading-snug line-clamp-2">
                     <Link href={`/producto/${prod.id}`} className="hover:text-blue-600">
                       {prod.nombre}
                     </Link>

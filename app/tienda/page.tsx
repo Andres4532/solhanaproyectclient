@@ -211,10 +211,10 @@ function TiendaContent() {
 
   const getEtiqueta = (producto: ProductoCatalogo) => {
     if (producto.es_best_seller) {
-      return { tipo: 'best-seller', texto: 'Best Seller' };
+      return { tipo: 'best-seller', texto: 'Más Vendidos' };
     }
     if (producto.es_nuevo) {
-      return { tipo: 'new', texto: 'New' };
+      return { tipo: 'new', texto: 'Nuevo' };
     }
     if (producto.es_oferta && producto.descuento > 0) {
       return { tipo: 'discount', texto: `-${Math.round(producto.descuento)}%` };
@@ -450,21 +450,63 @@ function TiendaContent() {
                 )}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Ordenar por:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => {
-                  setSortBy(e.target.value as 'precio-menor' | 'precio-mayor' | 'novedades' | 'popularidad');
-                  setCurrentPage(1);
-                }}
-                className="rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium focus:ring-blue-500/50 focus:border-blue-500/50 pl-4 pr-10 py-2"
-              >
-                <option value="popularidad">Popularidad</option>
-                <option value="precio-menor">Precio: Menor a Mayor</option>
-                <option value="precio-mayor">Precio: Mayor a Menor</option>
-                <option value="novedades">Novedades</option>
-              </select>
+            <div className="flex items-center gap-4">
+              {/* Campo de búsqueda */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const params = new URLSearchParams();
+                      if (searchQuery.trim()) {
+                        params.set('busqueda', searchQuery.trim());
+                      }
+                      if (selectedCategoryId) {
+                        params.set('categoria', selectedCategoryId);
+                      }
+                      router.push(`/tienda?${params.toString()}`);
+                      setCurrentPage(1);
+                    }
+                  }}
+                  onBlur={() => {
+                    // Actualizar URL cuando el campo pierde el foco
+                    const params = new URLSearchParams();
+                    if (searchQuery.trim()) {
+                      params.set('busqueda', searchQuery.trim());
+                    }
+                    if (selectedCategoryId) {
+                      params.set('categoria', selectedCategoryId);
+                    }
+                    router.push(`/tienda?${params.toString()}`, { scroll: false });
+                  }}
+                  placeholder="Buscar productos..."
+                  className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 w-64"
+                />
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 material-symbols-outlined text-gray-400 dark:text-gray-500 text-xl pointer-events-none">
+                  search
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Ordenar por:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => {
+                    setSortBy(e.target.value as 'precio-menor' | 'precio-mayor' | 'novedades' | 'popularidad');
+                    setCurrentPage(1);
+                  }}
+                  className="rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium focus:ring-blue-500/50 focus:border-blue-500/50 pl-4 pr-10 py-2"
+                >
+                  <option value="popularidad">Popularidad</option>
+                  <option value="precio-menor">Precio: Menor a Mayor</option>
+                  <option value="precio-mayor">Precio: Mayor a Menor</option>
+                  <option value="novedades">Novedades</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -502,7 +544,7 @@ function TiendaContent() {
                         </Link>
                         {etiqueta && (
                           <span
-                            className={`absolute top-3 left-3 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getEtiquetaClass(
+                            className={`absolute top-3 left-3 inline-flex items-center rounded-full px-4 py-1.5 text-sm font-bold ${getEtiquetaClass(
                               etiqueta.tipo
                             )}`}
                           >
@@ -514,7 +556,7 @@ function TiendaContent() {
                         <h3 className="text-sm text-gray-600 dark:text-gray-400">
                           {producto.categoria_nombre || 'Producto'}
                         </h3>
-                        <h4 className="mt-1 text-base font-semibold text-gray-900 dark:text-white">
+                        <h4 className="mt-1 text-base font-semibold text-gray-900 dark:text-white line-clamp-2">
                           <Link href={`/producto/${producto.id}`} className="hover:text-blue-600">
                             {producto.nombre}
                           </Link>
