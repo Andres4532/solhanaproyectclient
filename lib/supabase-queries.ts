@@ -573,6 +573,16 @@ export function getSessionId(): string {
   sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   localStorage.setItem(SESSION_KEY, sessionId);
   localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+  // También escribir cookie para que el backend pueda leer el session_id
+  try {
+    if (typeof document !== 'undefined') {
+      // Expirar en SESSION_EXPIRY_HOURS horas
+      const maxAge = SESSION_EXPIRY_HOURS * 60 * 60;
+      document.cookie = `cart_session_id=${sessionId}; path=/; max-age=${maxAge}`;
+    }
+  } catch (e) {
+    // noop
+  }
   
   return sessionId;
 }
@@ -973,6 +983,86 @@ export async function limpiarCarrito(cliente_id?: string, session_id?: string): 
       data: undefined,
       error: new Error(err.message || 'Error inesperado al limpiar el carrito'),
     };
+  }
+}
+
+// Migrar carrito asociado a `cliente_id` hacia un `session_id` (logout)
+export async function migrateUserCartToSession(cliente_id: string, session_id: string): Promise<QueryResult<void>> {
+  try {
+    // Obtener items del carrito del cliente
+    const { data: items, error: fetchError } = await supabase
+      .from('carrito')
+      .select('*')
+      .eq('cliente_id', cliente_id);
+
+    if (fetchError) {
+      return { data: undefined, error: new Error(fetchError.message) };
+    }
+
+    if (!items || items.length === 0) {
+      return { data: undefined, error: null };
+    }
+
+    for (const item of items) {
+      // Buscar si ya existe un item equivalente para este session_id
+      let query = supabase
+        .from('carrito')
+        .select('*')
+        .eq('session_id', session_id)
+        .eq('producto_id', item.producto_id);
+
+      if (item.variante_id) {
+        query = query.eq('variante_id', item.variante_id);
+      } else {
+        query = query.is('variante_id', null);
+      }
+
+      const { data: existing, error: existingError } = await query;
+
+      if (existingError) {
+        console.error('Error buscando item existente para migración:', existingError);
+        continue;
+      }
+
+      const existingItem = existing && existing.length > 0 ? existing[0] : null;
+
+      if (existingItem) {
+        // Sumar cantidades
+        const nuevaCantidad = existingItem.cantidad + item.cantidad;
+        await supabase
+          .from('carrito')
+          .update({ cantidad: nuevaCantidad, updated_at: new Date().toISOString() })
+          .eq('id', existingItem.id);
+      } else {
+        // Insertar item asociado al session_id
+        await supabase.from('carrito').insert({
+          producto_id: item.producto_id,
+          variante_id: item.variante_id || null,
+          cantidad: item.cantidad,
+          precio_unitario: item.precio_unitario,
+          color: item.color || null,
+          talla: item.talla || null,
+          cliente_id: null,
+          session_id: session_id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      }
+    }
+
+    // Eliminar items originales del cliente
+    const { error: deleteError } = await supabase
+      .from('carrito')
+      .delete()
+      .eq('cliente_id', cliente_id);
+
+    if (deleteError) {
+      return { data: undefined, error: new Error(deleteError.message) };
+    }
+
+    return { data: undefined, error: null };
+  } catch (err: any) {
+    return { data: undefined, error: new Error(err.message || 'Error al migrar carrito') };
   }
 }
 

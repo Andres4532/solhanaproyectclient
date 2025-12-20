@@ -16,6 +16,7 @@ export default function Header() {
   const [nombreTienda, setNombreTienda] = useState<string>('SOLHANA');
   const [mensajeCarrito, setMensajeCarrito] = useState<string | null>(null);
   const carritoCountAnteriorRef = useRef<number>(0);
+  const primeraCargaRef = useRef<boolean>(true);
 
   // Cargar usuario autenticado y logo
   useEffect(() => {
@@ -59,15 +60,22 @@ export default function Header() {
   useEffect(() => {
     async function loadCarritoCount() {
       try {
-        const sessionId = getSessionId();
-        const result = await getCarrito(undefined, sessionId);
+        let result;
+        if (user && user.id) {
+          // Usuario autenticado: obtener por cliente_id
+          result = await getCarrito(user.id, undefined);
+        } else {
+          const sessionId = getSessionId();
+          result = await getCarrito(undefined, sessionId);
+        }
+
         if (!result.error && result.data) {
           // Sumar todas las cantidades de los items del carrito
           const totalItems = result.data.reduce((sum, item) => sum + item.cantidad, 0);
           const previousCount = carritoCountAnteriorRef.current;
-          
-          // Mostrar mensaje si se agregó un producto (el contador aumentó)
-          if (totalItems > previousCount) {
+
+          // Mostrar mensaje solo si NO es la primera carga
+          if (!primeraCargaRef.current && totalItems > previousCount) {
             const itemsAgregados = totalItems - previousCount;
             if (itemsAgregados === 1) {
               setMensajeCarrito('Producto agregado');
@@ -77,7 +85,7 @@ export default function Header() {
             // Ocultar mensaje después de 3 segundos
             setTimeout(() => setMensajeCarrito(null), 3000);
           }
-          
+
           setCarritoCount(totalItems);
           carritoCountAnteriorRef.current = totalItems;
         } else {
@@ -86,6 +94,8 @@ export default function Header() {
         }
       } catch (err) {
         console.error('Error cargando contador del carrito:', err);
+      } finally {
+        primeraCargaRef.current = false;
       }
     }
 
@@ -93,7 +103,7 @@ export default function Header() {
 
     // Actualizar cada 2 segundos para reflejar cambios más rápido
     const interval = setInterval(loadCarritoCount, 2000);
-    
+
     // Escuchar eventos de actualización del carrito
     const handleCarritoUpdate = () => {
       loadCarritoCount();
@@ -104,22 +114,30 @@ export default function Header() {
       clearInterval(interval);
       window.removeEventListener('carrito-updated', handleCarritoUpdate);
     };
-  }, []);
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
+      // Antes de cerrar sesión, migrar el carrito del cliente al session_id
+      if (user && user.id) {
+        try {
+          const sessionId = getSessionId();
+          await (await import('@/lib/supabase-queries')).migrateUserCartToSession(user.id, sessionId);
+        } catch (e) {
+          console.error('Error migrando carrito antes de logout:', e);
+        }
+      }
+
       const { error } = await signOut();
       if (error) {
         console.error('Error cerrando sesión:', error);
         alert('Error al cerrar sesión. Por favor, intenta de nuevo.');
         return;
       }
-      // Limpiar session_id y carrito al cerrar sesión
-      clearSessionId();
+
+      // No limpiar session_id ni redirigir: quedarnos en la misma vista y preservar el carrito
       setUser(null);
-      // Disparar evento para actualizar otros componentes
       window.dispatchEvent(new Event('auth-state-changed'));
-      router.push('/');
     } catch (err) {
       console.error('Error:', err);
       alert('Error al cerrar sesión. Por favor, intenta de nuevo.');

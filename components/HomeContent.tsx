@@ -191,6 +191,7 @@ export default function HomeContent() {
                           src={producto.imagen_principal}
                           alt={producto.nombre}
                           fill
+                          sizes="(max-width: 768px) 100vw, 256px"
                           className="object-cover"
                         />
                       </div>

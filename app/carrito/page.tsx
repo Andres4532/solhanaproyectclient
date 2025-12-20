@@ -132,11 +132,30 @@ export default function CarritoPage() {
         setLoading(true);
         setError(null);
 
-        // Obtener session_id
-        const sessionId = getSessionId();
-
-        // Cargar carrito
-        const carritoResult = await getCarrito(undefined, sessionId);
+        let carritoResult;
+        
+        // Si hay usuario autenticado, cargar carrito por cliente_id
+        if (user?.id) {
+          try {
+            const clienteResult = await getClienteByUserId(user.id);
+            if (clienteResult.data?.id) {
+              carritoResult = await getCarrito(clienteResult.data.id, undefined);
+            } else {
+              // Si no hay cliente, usar session_id
+              const sessionId = getSessionId();
+              carritoResult = await getCarrito(undefined, sessionId);
+            }
+          } catch (err) {
+            // Fallback a session_id
+            const sessionId = getSessionId();
+            carritoResult = await getCarrito(undefined, sessionId);
+          }
+        } else {
+          // Usuario anónimo, cargar por session_id
+          const sessionId = getSessionId();
+          carritoResult = await getCarrito(undefined, sessionId);
+        }
+        
         if (carritoResult.error) {
           console.error('Error cargando carrito:', carritoResult.error);
           setCarrito([]);
@@ -255,8 +274,8 @@ export default function CarritoPage() {
     }
   };
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEmailAuth = async (e?: React.FormEvent) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
     try {
       setAuthLoading(true);
       let result;
@@ -672,7 +691,7 @@ export default function CarritoPage() {
                       </button>
 
                       {showEmailAuth && (
-                        <form onSubmit={handleEmailAuth} className="mt-4 space-y-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                        <div role="form" className="mt-4 space-y-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                           {emailAuthMode === 'signup' && (
                             <div>
                               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -716,7 +735,8 @@ export default function CarritoPage() {
                           </div>
                           <div className="flex gap-2">
                             <button
-                              type="submit"
+                              type="button"
+                              onClick={() => handleEmailAuth()}
                               disabled={authLoading}
                               className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                             >
@@ -733,7 +753,7 @@ export default function CarritoPage() {
                               {emailAuthMode === 'login' ? 'Registrarse' : 'Iniciar sesión'}
                             </button>
                           </div>
-                        </form>
+                        </div>
                       )}
                     </div>
                   )}
@@ -749,14 +769,21 @@ export default function CarritoPage() {
                         </div>
                         <button
                           onClick={async () => {
-                            const { error } = await signOut();
-                            if (!error) {
-                              // Limpiar session_id y carrito al cerrar sesión
-                              clearSessionId();
-                              setUser(null);
-                              window.dispatchEvent(new Event('auth-state-changed'));
-                              router.push('/');
-                            } else {
+                            try {
+                              if (user && user.id) {
+                                const sessionId = getSessionId();
+                                await (await import('@/lib/supabase-queries')).migrateUserCartToSession(user.id, sessionId);
+                              }
+                              const { error } = await signOut();
+                              if (!error) {
+                                setUser(null);
+                                window.dispatchEvent(new Event('auth-state-changed'));
+                                // Mantener en la misma vista y preservar carrito anónimo
+                              } else {
+                                alert('Error al cerrar sesión. Por favor, intenta de nuevo.');
+                              }
+                            } catch (e) {
+                              console.error('Error durante logout:', e);
                               alert('Error al cerrar sesión. Por favor, intenta de nuevo.');
                             }
                           }}

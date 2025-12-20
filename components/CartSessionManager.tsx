@@ -5,9 +5,11 @@ import { clearSessionId } from '@/lib/supabase-queries';
 
 export default function CartSessionManager() {
   useEffect(() => {
-    // Limpiar carrito cuando el usuario cierra la pestaña o el navegador
+    // No limpiar el carrito en beforeunload: esto borra la sesión
+    // cuando se redirige al proveedor OAuth (p. ej. Google).
+    // Mantener el session_id para permitir migración server-side.
     const handleBeforeUnload = () => {
-      clearSessionId();
+      // intentionally left blank to preserve anonymous cart during redirects
     };
 
     // Limpiar carrito cuando la pestaña se oculta (usuario cambia de pestaña o minimiza)
