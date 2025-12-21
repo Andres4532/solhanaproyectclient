@@ -277,9 +277,9 @@ export default function HomeContent() {
               <div className="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400">
                 <span className="material-symbols-outlined text-2xl">local_shipping</span>
               </div>
-              <h4 className="text-base font-bold text-gray-900 dark:text-white">Envío Gratis</h4>
+              <h4 className="text-base font-bold text-gray-900 dark:text-white">Envíos Gratuitos</h4>
               <p className="text-gray-600 dark:text-gray-400 text-sm max-w-xs">
-                En todos los pedidos superiores a $50. Enviamos a cualquier parte del país.
+                Todos nuestros productos cuentan con envío gratuito. Consulta disponibilidad según zona.
               </p>
             </div>
             <div className="flex flex-col items-center gap-2">

@@ -201,6 +201,24 @@ function TiendaContent() {
     setCurrentPage(1); // Resetear a primera página
   };
 
+  // Filtrar tipos de producto según la categoría seleccionada
+  const tiposProductosFiltrados = useMemo(() => {
+    if (!selectedCategoryId) {
+      // Si no hay categoría seleccionada, mostrar todos los tipos
+      return tiposProductos;
+    }
+    
+    // Si hay categoría seleccionada, obtener solo los tipos de esa categoría
+    const categoriasConTipos = categorias.map((cat) => ({
+      id: cat.id,
+      nombre: cat.nombre,
+      tipos: cat.tipo_producto ? (Array.isArray(cat.tipo_producto) ? cat.tipo_producto : [cat.tipo_producto]) : [],
+    }));
+    
+    const categoriaSeleccionada = categoriasConTipos.find((cat) => cat.id === selectedCategoryId);
+    return categoriaSeleccionada?.tipos || [];
+  }, [selectedCategoryId, categorias, tiposProductos]);
+
 
   const clearFilters = () => {
     setSelectedCategoryId(null);
@@ -322,6 +340,7 @@ function TiendaContent() {
                 <button
                   onClick={() => {
                     setSelectedCategoryId(null);
+                    setSelectedTypes([]); // Limpiar tipos al seleccionar "Todas"
                     setCurrentPage(1);
                   }}
                   className={`block text-sm w-full text-left ${
@@ -337,6 +356,7 @@ function TiendaContent() {
                     key={cat.id}
                     onClick={() => {
                       setSelectedCategoryId(cat.id);
+                      setSelectedTypes([]); // Limpiar tipos al cambiar de categoría
                       setCurrentPage(1);
                     }}
                     className={`block text-sm w-full text-left ${
@@ -351,12 +371,12 @@ function TiendaContent() {
               </div>
             </div>
 
-            {/* Tipo de Calzado */}
-            {tiposProductos.length > 0 && (
+            {/* Tipo de Producto */}
+            {tiposProductosFiltrados.length > 0 && (
               <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
-                <h4 className="font-semibold text-gray-900 dark:text-white">Tipo de Calzado</h4>
+                <h4 className="font-semibold text-gray-900 dark:text-white">TIPO DE PRODUCTO</h4>
                 <div className="space-y-3">
-                  {tiposProductos.map((type) => (
+                  {tiposProductosFiltrados.map((type) => (
                     <label key={type} className="flex items-center space-x-3 cursor-pointer">
                       <input
                         type="checkbox"

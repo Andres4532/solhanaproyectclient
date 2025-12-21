@@ -13,6 +13,8 @@ import {
   agregarAlCarrito,
   getSessionId,
   getCarrito,
+  actualizarCantidadCarrito,
+  eliminarItemCarrito,
 } from '@/lib/supabase-queries';
 import type { Producto, ProductoImagen, ProductoEspecificacion, ProductoVariante, ProductoCatalogo, CarritoCompleto } from '@/types/database';
 import { formatPrice } from '@/lib/utils';
@@ -117,10 +119,14 @@ export default function ProductoPage() {
       }
     };
 
-    window.addEventListener('carrito-updated', handleCarritoUpdate);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('carrito-updated', handleCarritoUpdate);
+    }
 
     return () => {
-      window.removeEventListener('carrito-updated', handleCarritoUpdate);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('carrito-updated', handleCarritoUpdate);
+      }
     };
   }, [productoId]);
 
@@ -215,11 +221,117 @@ export default function ProductoPage() {
     return Math.max(0, stockBase - cantidadEnCarrito);
   }, [varianteSeleccionada, producto, variantes, cantidadEnCarrito]);
 
-  const incrementarCantidad = () => {
-    setCantidad((prev) => Math.min(prev + 1, stockDisponible));
+  // Calcular stock máximo disponible para un item del carrito
+  const calcularStockMaximo = (item: CarritoCompleto): number => {
+    if (item.variante_id) {
+      const variante = variantes.find(v => v.id === item.variante_id);
+      return variante?.stock || 0;
+    } else {
+      const prod = item.producto_id === producto?.id ? producto : null;
+      if (prod?.tiene_variantes && variantes.length > 0) {
+        return variantes
+          .filter((v) => {
+            if (!v.activo) return false;
+            const attrs = v.atributos || {};
+            const vColor = attrs.color || attrs.Color || attrs.COLOR;
+            const vTalla = attrs.talla || attrs.Talla || attrs.TALLA;
+            
+            if (item.color && vColor !== item.color) return false;
+            if (item.talla && vTalla !== item.talla) return false;
+            return true;
+          })
+          .reduce((sum, v) => sum + v.stock, 0);
+      } else {
+        return prod?.stock || 0;
+      }
+    }
+  };
+
+  const incrementarCantidad = async () => {
+    // Buscar si el producto ya está en el carrito
+    const itemEnCarrito = carrito.find((item) => {
+      if (item.producto_id !== producto?.id) return false;
+      if (varianteSeleccionada && item.variante_id !== varianteSeleccionada.id) return false;
+      if (!varianteSeleccionada && producto?.tiene_variantes) {
+        const varianteInfo = item.variante_atributos || {};
+        const itemColor = item.color || varianteInfo.color || varianteInfo.Color;
+        const itemTalla = item.talla || varianteInfo.talla || varianteInfo.Talla;
+        if (colorSeleccionado && itemColor !== colorSeleccionado) return false;
+        if (tallaSeleccionada && itemTalla !== tallaSeleccionada) return false;
+      }
+      return true;
+    });
+
+    if (itemEnCarrito && cantidadEnCarrito > 0) {
+      // Si ya está en el carrito, actualizar la cantidad directamente
+      const stockMax = calcularStockMaximo(itemEnCarrito);
+      if (cantidadEnCarrito >= stockMax) {
+        alert(`Solo hay ${stockMax} unidades disponibles en stock.`);
+        return;
+      }
+      await handleActualizarCantidad(itemEnCarrito.id, cantidadEnCarrito + 1);
+    } else {
+      // Si no está en el carrito, solo cambiar el estado local
+      setCantidad((prev) => Math.min(prev + 1, stockDisponible));
+    }
   };
   
-  const decrementarCantidad = () => setCantidad((prev) => Math.max(1, prev - 1));
+  const decrementarCantidad = async () => {
+    // Buscar si el producto ya está en el carrito
+    const itemEnCarrito = carrito.find((item) => {
+      if (item.producto_id !== producto?.id) return false;
+      if (varianteSeleccionada && item.variante_id !== varianteSeleccionada.id) return false;
+      if (!varianteSeleccionada && producto?.tiene_variantes) {
+        const varianteInfo = item.variante_atributos || {};
+        const itemColor = item.color || varianteInfo.color || varianteInfo.Color;
+        const itemTalla = item.talla || varianteInfo.talla || varianteInfo.Talla;
+        if (colorSeleccionado && itemColor !== colorSeleccionado) return false;
+        if (tallaSeleccionada && itemTalla !== tallaSeleccionada) return false;
+      }
+      return true;
+    });
+
+    if (itemEnCarrito && cantidadEnCarrito > 1) {
+      // Si ya está en el carrito, actualizar la cantidad directamente
+      const nuevaCantidad = Math.max(1, cantidadEnCarrito - 1);
+      await handleActualizarCantidad(itemEnCarrito.id, nuevaCantidad);
+    } else {
+      // Si no está en el carrito, solo cambiar el estado local
+      setCantidad((prev) => Math.max(1, prev - 1));
+    }
+  };
+  
+  // Verificar si el botón + debe estar deshabilitado
+  const botonIncrementarDeshabilitado = useMemo(() => {
+    const itemEnCarrito = carrito.find((item) => {
+      if (item.producto_id !== producto?.id) return false;
+      if (varianteSeleccionada && item.variante_id !== varianteSeleccionada.id) return false;
+      if (!varianteSeleccionada && producto?.tiene_variantes) {
+        const varianteInfo = item.variante_atributos || {};
+        const itemColor = item.color || varianteInfo.color || varianteInfo.Color;
+        const itemTalla = item.talla || varianteInfo.talla || varianteInfo.Talla;
+        if (colorSeleccionado && itemColor !== colorSeleccionado) return false;
+        if (tallaSeleccionada && itemTalla !== tallaSeleccionada) return false;
+      }
+      return true;
+    });
+
+    if (itemEnCarrito) {
+      const stockMax = calcularStockMaximo(itemEnCarrito);
+      return cantidadEnCarrito >= stockMax;
+    } else {
+      return cantidad >= stockDisponible || stockDisponible === 0;
+    }
+  }, [carrito, producto, varianteSeleccionada, colorSeleccionado, tallaSeleccionada, cantidad, stockDisponible, cantidadEnCarrito]);
+
+  // Sincronizar el contador principal con la cantidad en el carrito
+  useEffect(() => {
+    if (cantidadEnCarrito > 0) {
+      setCantidad(cantidadEnCarrito);
+    } else {
+      setCantidad(1);
+    }
+  }, [cantidadEnCarrito, colorSeleccionado, tallaSeleccionada]);
   
   // Validar cantidad cuando cambia el stock disponible
   useEffect(() => {
@@ -286,8 +398,7 @@ export default function ProductoPage() {
         
         // Limpiar mensaje después de 3 segundos
         setTimeout(() => setMensajeExito(null), 3000);
-        // Resetear cantidad a 1
-        setCantidad(1);
+        // La cantidad se sincronizará automáticamente con el useEffect
       }
     } catch (err) {
       console.error('Error agregando al carrito:', err);
@@ -297,6 +408,94 @@ export default function ProductoPage() {
     }
   };
 
+  const handleActualizarCantidad = async (carritoId: string, nuevaCantidad: number) => {
+    if (nuevaCantidad <= 0) return;
+    
+    // Encontrar el item en el carrito
+    const itemCarrito = carrito.find(item => item.id === carritoId);
+    if (!itemCarrito) return;
+    
+    // Calcular el stock disponible para este producto/variante
+    let stockMaximo = 0;
+    
+    if (itemCarrito.variante_id) {
+      // Si tiene variante, buscar el stock de esa variante
+      const variante = variantes.find(v => v.id === itemCarrito.variante_id);
+      stockMaximo = variante?.stock || 0;
+    } else {
+      // Si no tiene variante, usar el stock del producto
+      const prod = itemCarrito.producto_id === producto?.id ? producto : null;
+      if (prod?.tiene_variantes && variantes.length > 0) {
+        // Si el producto tiene variantes, sumar el stock de variantes que coincidan
+        stockMaximo = variantes
+          .filter((v) => {
+            if (!v.activo) return false;
+            const attrs = v.atributos || {};
+            const vColor = attrs.color || attrs.Color || attrs.COLOR;
+            const vTalla = attrs.talla || attrs.Talla || attrs.TALLA;
+            
+            if (itemCarrito.color && vColor !== itemCarrito.color) return false;
+            if (itemCarrito.talla && vTalla !== itemCarrito.talla) return false;
+            return true;
+          })
+          .reduce((sum, v) => sum + v.stock, 0);
+      } else {
+        stockMaximo = prod?.stock || 0;
+      }
+    }
+    
+    // Validar que la nueva cantidad no exceda el stock
+    if (nuevaCantidad > stockMaximo) {
+      alert(`Solo hay ${stockMaximo} unidades disponibles en stock.`);
+      return;
+    }
+    
+    try {
+      const result = await actualizarCantidadCarrito(carritoId, nuevaCantidad);
+      if (result.error) {
+        console.error('Error actualizando cantidad:', result.error);
+        alert('Error al actualizar la cantidad');
+      } else {
+        // Recargar carrito
+        const sessionId = getSessionId();
+        const carritoResult = await getCarrito(undefined, sessionId);
+        if (!carritoResult.error && carritoResult.data) {
+          setCarrito(carritoResult.data);
+        }
+        // Disparar evento para actualizar el contador del header
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('carrito-updated'));
+        }
+      }
+    } catch (err) {
+      console.error('Error actualizando cantidad:', err);
+      alert('Error al actualizar la cantidad');
+    }
+  };
+
+  const handleEliminarDelCarrito = async (carritoId: string) => {
+    try {
+      const result = await eliminarItemCarrito(carritoId);
+      if (result.error) {
+        console.error('Error eliminando del carrito:', result.error);
+        alert('Error al eliminar del carrito');
+      } else {
+        // Recargar carrito
+        const sessionId = getSessionId();
+        const carritoResult = await getCarrito(undefined, sessionId);
+        if (!carritoResult.error && carritoResult.data) {
+          setCarrito(carritoResult.data);
+        }
+        // Disparar evento para actualizar el contador del header
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('carrito-updated'));
+        }
+      }
+    } catch (err) {
+      console.error('Error eliminando del carrito:', err);
+      alert('Error al eliminar del carrito');
+    }
+  };
 
   // Filtrar tallas disponibles según color seleccionado (si hay color)
   const tallasDisponiblesPorColor = colorSeleccionado
@@ -428,9 +627,9 @@ export default function ProductoPage() {
         <span className="text-gray-900 dark:text-white font-medium">{producto.nombre}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+      <div className={`grid grid-cols-1 gap-6 lg:gap-8 ${carrito.length > 0 ? 'lg:grid-cols-12' : 'lg:grid-cols-2'}`}>
         {/* Galería de Imágenes */}
-        <div className="flex flex-col gap-4">
+        <div className={`${carrito.length > 0 ? 'lg:col-span-5' : ''} flex flex-col gap-4`}>
           {imagenesProducto.length > 0 ? (
             <>
               <div className="relative w-full aspect-square rounded-xl shadow-sm overflow-hidden bg-gray-100">
@@ -467,7 +666,7 @@ export default function ProductoPage() {
         </div>
 
         {/* Información del Producto */}
-        <div>
+        <div className={carrito.length > 0 ? 'lg:col-span-4' : ''}>
           <h1 className="text-gray-900 dark:text-white tracking-tight text-3xl md:text-4xl font-bold leading-tight">
             {producto.nombre}
           </h1>
@@ -656,15 +855,7 @@ export default function ProductoPage() {
             {/* Talla - Solo mostrar si el producto tiene variantes con tallas */}
             {producto.tiene_variantes && tallasDisponibles.length > 0 && (
               <div>
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Talla</h3>
-                  <Link
-                    href="#"
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                  >
-                    Guía de Tallas
-                  </Link>
-                </div>
+                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Talla</h3>
                 <div className="grid grid-cols-4 gap-3 mt-2">
                   {tallasDisponiblesPorColor.map((talla) => {
                     // Verificar si hay stock para esta talla
@@ -738,7 +929,7 @@ export default function ProductoPage() {
                 />
                 <button
                   onClick={incrementarCantidad}
-                  disabled={cantidad >= stockDisponible || stockDisponible === 0}
+                  disabled={botonIncrementarDeshabilitado}
                   className="px-3 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="material-symbols-outlined !text-xl">add</span>
@@ -810,23 +1001,18 @@ export default function ProductoPage() {
               </p>
             </div>
             {especificaciones.length > 0 && (
-              <details className="group py-4 border-b border-gray-200 dark:border-gray-700">
-                <summary className="flex justify-between items-center cursor-pointer list-none">
-                  <span className="font-semibold text-gray-800 dark:text-gray-200">
-                    Especificaciones
-                  </span>
-                  <span className="transition-transform duration-300 group-open:rotate-180">
-                    <span className="material-symbols-outlined">expand_more</span>
-                  </span>
-                </summary>
-                <ul className="mt-4 text-gray-600 dark:text-gray-300 text-sm leading-relaxed list-disc pl-5 space-y-1">
+              <div className="py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                  Especificaciones
+                </h3>
+                <ul className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed list-disc pl-5 space-y-1">
                   {especificaciones.map((spec) => (
                     <li key={spec.id}>
                       <strong>{spec.nombre}:</strong> {spec.valor || 'N/A'}
                     </li>
                   ))}
                 </ul>
-              </details>
+              </div>
             )}
             {/* Envíos y Devoluciones - Siempre visible */}
             <div className="py-4 border-b border-gray-200 dark:border-gray-700">
@@ -841,6 +1027,105 @@ export default function ProductoPage() {
             </div>
           </div>
         </div>
+
+        {/* Mini Carrito Lateral - Solo visible cuando hay productos */}
+        {carrito.length > 0 && (
+          <div className="lg:col-span-3 hidden lg:block">
+            <div className="sticky top-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 max-h-[calc(100vh-2rem)] overflow-y-auto">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Tu Carrito
+              </h2>
+              
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                {carrito.length} {carrito.length === 1 ? 'artículo' : 'artículos'}
+              </p>
+                
+                <div className="space-y-4 mb-6">
+                  {carrito.map((item) => (
+                    <div key={item.id} className="flex gap-3 pb-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
+                      <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0">
+                        {item.imagen ? (
+                          <Image
+                            src={item.imagen}
+                            alt={item.producto_nombre || 'Producto'}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            <span className="material-symbols-outlined">image</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                          {item.producto_nombre || 'Producto'}
+                        </h3>
+                        
+                        {(item.color || item.talla) && (
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                            {item.color && `Color: ${item.color}`}
+                            {item.color && item.talla && ', '}
+                            {item.talla && `Talla: ${item.talla}`}
+                          </p>
+                        )}
+                        
+                        <p className="text-sm font-bold text-gray-900 dark:text-white mt-1">
+                          {formatPrice(item.precio_unitario * item.cantidad)}
+                        </p>
+                        
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded">
+                            <button
+                              onClick={() => handleActualizarCantidad(item.id, item.cantidad - 1)}
+                              disabled={item.cantidad <= 1}
+                              className="px-2 py-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <span className="material-symbols-outlined !text-sm">remove</span>
+                            </button>
+                            <span className="px-2 text-sm text-gray-800 dark:text-gray-200 min-w-[20px] text-center">
+                              {item.cantidad}
+                            </span>
+                            <button
+                              onClick={() => handleActualizarCantidad(item.id, item.cantidad + 1)}
+                              disabled={item.cantidad >= calcularStockMaximo(item)}
+                              className="px-2 py-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <span className="material-symbols-outlined !text-sm">add</span>
+                            </button>
+                          </div>
+                          
+                          <button
+                            onClick={() => handleEliminarDelCarrito(item.id)}
+                            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs flex items-center gap-1"
+                          >
+                            <span className="material-symbols-outlined !text-sm">delete</span>
+                            Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="space-y-3">
+                  <Link
+                    href="/carrito"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition-colors"
+                  >
+                    INICIAR PEDIDO
+                  </Link>
+                  <Link
+                    href="/tienda"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold transition-colors"
+                  >
+                    SEGUIR COMPRANDO
+                  </Link>
+                </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Productos Relacionados */}

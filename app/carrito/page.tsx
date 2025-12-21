@@ -20,6 +20,7 @@ import { signInWithGoogle, signInWithEmail, signUpWithEmail, getUser, signOut } 
 import type { CarritoCompleto, CiudadEnvio, MetodoPago } from '@/types/database';
 import { formatPrice } from '@/lib/utils';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import MapLocationPicker from '@/components/MapLocationPicker';
 
 export default function CarritoPage() {
   const router = useRouter();
@@ -278,16 +279,51 @@ export default function CarritoPage() {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
     try {
       setAuthLoading(true);
+      
+      // Validar campos
+      if (!emailForm.email || !emailForm.password) {
+        alert('Por favor completa todos los campos requeridos.');
+        setAuthLoading(false);
+        return;
+      }
+      
+      if (emailForm.email.length < 5 || !emailForm.email.includes('@')) {
+        alert('Por favor ingresa un email válido.');
+        setAuthLoading(false);
+        return;
+      }
+      
+      if (emailForm.password.length < 6) {
+        alert('La contraseña debe tener al menos 6 caracteres.');
+        setAuthLoading(false);
+        return;
+      }
+      
       let result;
       
       if (emailAuthMode === 'login') {
+        console.log('Intentando login con:', emailForm.email);
         result = await signInWithEmail(emailForm.email, emailForm.password);
       } else {
+        console.log('Intentando signup con:', emailForm.email, 'nombre:', emailForm.nombre);
         result = await signUpWithEmail(emailForm.email, emailForm.password, { nombre: emailForm.nombre });
+        console.log('Resultado del signup:', result);
       }
 
       if (result.error) {
-        alert(result.error.message || 'Error al autenticar. Por favor, verifica tus datos.');
+        console.error('Error de autenticación:', result.error);
+        const errorMsg = result.error.message || 'Error al autenticar. Por favor, verifica tus datos.';
+        alert(errorMsg);
+        return;
+      }
+
+      // Si es signup, mostrar mensaje de éxito
+      if (emailAuthMode === 'signup') {
+        console.log('Signup exitoso, usuario registrado:', result.data?.user?.email);
+        alert('¡Registro exitoso! Ahora inicia sesión con tus credenciales.');
+        setEmailAuthMode('login');
+        setEmailForm({ email: emailForm.email, password: emailForm.password, nombre: '' });
+        setAuthLoading(false);
         return;
       }
 
@@ -674,87 +710,6 @@ export default function CarritoPage() {
                           {authLoading ? 'Cargando...' : 'Continuar con Google'}
                         </span>
                       </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowEmailAuth(!showEmailAuth);
-                          setEmailAuthMode('login');
-                        }}
-                        disabled={authLoading}
-                        className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <span className="material-symbols-outlined">email</span>
-                        <span className="font-medium">
-                          Continuar con Correo
-                        </span>
-                      </button>
-
-                      {showEmailAuth && (
-                        <div role="form" className="mt-4 space-y-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                          {emailAuthMode === 'signup' && (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Nombre
-                              </label>
-                              <input
-                                type="text"
-                                value={emailForm.nombre}
-                                onChange={(e) => setEmailForm({ ...emailForm, nombre: e.target.value })}
-                                placeholder="Tu nombre"
-                                className="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-blue-600 focus:ring-blue-600 px-3 py-2 text-sm"
-                                required={emailAuthMode === 'signup'}
-                              />
-                            </div>
-                          )}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                              Correo electrónico
-                            </label>
-                            <input
-                              type="email"
-                              value={emailForm.email}
-                              onChange={(e) => setEmailForm({ ...emailForm, email: e.target.value })}
-                              placeholder="correo@ejemplo.com"
-                              className="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-blue-600 focus:ring-blue-600 px-3 py-2 text-sm"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                              Contraseña
-                            </label>
-                            <input
-                              type="password"
-                              value={emailForm.password}
-                              onChange={(e) => setEmailForm({ ...emailForm, password: e.target.value })}
-                              placeholder="••••••••"
-                              className="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-blue-600 focus:ring-blue-600 px-3 py-2 text-sm"
-                              required
-                            />
-                          </div>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleEmailAuth()}
-                              disabled={authLoading}
-                              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                            >
-                              {authLoading ? 'Cargando...' : emailAuthMode === 'login' ? 'Iniciar sesión' : 'Registrarse'}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setEmailAuthMode(emailAuthMode === 'login' ? 'signup' : 'login');
-                                setEmailForm({ email: '', password: '', nombre: '' });
-                              }}
-                              className="px-4 py-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
-                            >
-                              {emailAuthMode === 'login' ? 'Registrarse' : 'Iniciar sesión'}
-                            </button>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   )}
 
@@ -894,6 +849,16 @@ export default function CarritoPage() {
                           onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
                           placeholder="Dirección y Referencias Adicionales"
                           className="block w-full rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-blue-600 focus:ring-blue-600 pl-10 sm:text-sm"
+                        />
+                      </div>
+                      
+                      {/* Componente de Mapa */}
+                      <div className="mt-3">
+                        <MapLocationPicker
+                          initialAddress={formData.direccion}
+                          onLocationSelect={(address) => {
+                            setFormData({ ...formData, direccion: address });
+                          }}
                         />
                       </div>
                     </div>
