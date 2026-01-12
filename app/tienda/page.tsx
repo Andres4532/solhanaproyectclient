@@ -10,6 +10,11 @@ import {
   getTiposProductos,
 } from '@/lib/supabase-queries';
 import type { ProductoCatalogo, Categoria } from '@/types/database';
+
+// Extender Categoria para incluir tipo_producto
+interface CategoriaConTipo extends Categoria {
+  tipo_producto?: string | string[];
+}
 import { formatPrice } from '@/lib/utils';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -209,11 +214,12 @@ function TiendaContent() {
     }
     
     // Si hay categoría seleccionada, obtener solo los tipos de esa categoría
-    const categoriasConTipos = categorias.map((cat: Categoria) => {
-      const tipoProducto = cat.tipo_producto;
+    const categoriasConTipos = categorias.map((cat) => {
+      const categoria = cat as CategoriaConTipo;
+      const tipoProducto = categoria.tipo_producto;
       return {
-        id: cat.id,
-        nombre: cat.nombre,
+        id: categoria.id,
+        nombre: categoria.nombre,
         tipos: tipoProducto ? (Array.isArray(tipoProducto) ? tipoProducto : [tipoProducto]) : [],
       };
     });
