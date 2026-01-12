@@ -209,11 +209,14 @@ function TiendaContent() {
     }
     
     // Si hay categoría seleccionada, obtener solo los tipos de esa categoría
-    const categoriasConTipos = categorias.map((cat) => ({
-      id: cat.id,
-      nombre: cat.nombre,
-      tipos: cat.tipo_producto ? (Array.isArray(cat.tipo_producto) ? cat.tipo_producto : [cat.tipo_producto]) : [],
-    }));
+    const categoriasConTipos = categorias.map((cat: Categoria) => {
+      const tipoProducto = cat.tipo_producto;
+      return {
+        id: cat.id,
+        nombre: cat.nombre,
+        tipos: tipoProducto ? (Array.isArray(tipoProducto) ? tipoProducto : [tipoProducto]) : [],
+      };
+    });
     
     const categoriaSeleccionada = categoriasConTipos.find((cat) => cat.id === selectedCategoryId);
     return categoriaSeleccionada?.tipos || [];
