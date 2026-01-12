@@ -10,6 +10,7 @@ export interface Categoria {
   banner_imagen_url: string | null; // URL de imagen del banner de categoría
   banner_titulo: string | null; // Título del banner de categoría
   banner_descripcion: string | null; // Descripción del banner de categoría
+  tipo_producto?: string | string[];
   orden: number;
   estado: 'Activo' | 'Inactivo';
   created_at: string;
